@@ -13,15 +13,14 @@ public class Etudiant {
 	private String email;
 	
 	// Constructors
-	
-	// minimum constructor
+	// hada ghadi ycreati lina l'object les atts a5rin ghadi nzidohom b Setters
 	public Etudiant(String nomComplet, String filiere, String niveau) {
 		this.nomComplet = nomComplet;
         this.filiere = filiere;
         this.niveau = niveau;
 	}
 	
-	//Complete constructor
+	// constructeurs complet (hada ki3awnk bach tvisualiser l'object dyalk mn DataBase)
 	public Etudiant(int id, String nomComplet, String filiere, String niveau, String matricule, String email) {
 		this.id = id;
 		this.nomComplet = nomComplet;
