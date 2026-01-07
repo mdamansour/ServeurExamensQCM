@@ -74,8 +74,23 @@ public class Etudiant {
 
 	
 	@Override
-    public String toString() {
-        return "Etudiant [id=" + id + ", nom=" + nomComplet + ", matricule=" + (matricule != null ? matricule : "N/A") + "]";
-    }
+	public String toString() {
+		
+		String description = "Etudiant [id=" + id + ", nom complet=" + nomComplet + ", filiere=" + filiere + ", niveau=" + niveau;
+
+		// Remplit la suite avec le matricule
+		if (matricule != null) {
+			description = description + ", matricule=" + matricule;
+		}
+
+		//  Remplit la suite avec le matricule
+		if (email != null) {
+			description = description + ", email=" + email;
+		}
+
+		description = description + "]";
+
+		return description;
+	}
 	
 }
