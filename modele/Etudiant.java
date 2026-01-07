@@ -23,7 +23,6 @@ public class Etudiant {
 	
 	//Complete constructor
 	public Etudiant(int id, String nomComplet, String filiere, String niveau, String matricule, String email) {
-		super();
 		this.id = id;
 		this.nomComplet = nomComplet;
 		this.filiere = filiere;
