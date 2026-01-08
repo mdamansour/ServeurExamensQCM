@@ -50,15 +50,20 @@ public class Examen {
 	}
 	
 		// changer le bareme
-	public void setBareme(double juste, double faux, double vide) {
+	public void setBareme(double juste, double faux, double vide) { // fix the input attributs to match the ones inside the function
 		this.pointSiJuste = juste;
 		this.pointSiFaux = faux;
 		this.pointSiVide = vide;
 	}
 	
-		// Note maximale possible
+	// Note maximale possible (La somme des max de chaque question)
 	public double getNoteTotale() {
-		return this.questions.size() * this.pointSiJuste;
+		double total = 0.0;
+		for (Question q : this.questions) {
+			// The exam asks the question: "How many points are you worth max?"
+			total += q.getScoreMaxPossible(this.pointSiJuste);
+		}
+		return total;
 	}
 	
 	// Getters and Setters

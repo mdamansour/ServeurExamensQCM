@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 import dao.ExamenDAO;
 import dao.ProfesseurDAO;
-import dao.QuestionDAO;
 import dao.ResultatDAO;
 import modele.Examen;
 import modele.Professeur;
@@ -28,7 +27,8 @@ public class MenuProfesseur {
 			System.out.println("1. Nouveau professeur (Inscription)");
 			System.out.println("2. Déjà inscrit (Login)");
 			System.out.print("👉 Choix : ");
-			int choix = clavier.nextInt();
+			int choix = 0;
+			try { choix = clavier.nextInt(); } catch(Exception e) { choix=0; }
 			clavier.nextLine(); // Vider buffer
 			
 			if (choix == 1) {
@@ -75,9 +75,9 @@ public class MenuProfesseur {
 				System.out.println("\n--- NOUVEL EXAMEN ---");
 				System.out.print("Titre : ");
 				String titre = clavier.nextLine();
-				System.out.print("Filière : ");
+				System.out.print("Filière (ex: Info) : ");
 				String filiere = clavier.nextLine();
-				System.out.print("Niveau : ");
+				System.out.print("Niveau (ex: M1) : ");
 				String niveau = clavier.nextLine();
 				
 				Examen examen = new Examen(titre, filiere, niveau, profConnecte);
@@ -93,7 +93,7 @@ public class MenuProfesseur {
 				
 				// Boucle Question
 				boolean ajoutQ = true;
-				QuestionDAO qDao = new QuestionDAO();
+				// NOTE: On n'utilise plus QuestionDAO ici directement
 				
 				while (ajoutQ) {
 					System.out.print("\nÉnoncé Question : ");
@@ -112,11 +112,12 @@ public class MenuProfesseur {
 					while(true) {
 						int rep = clavier.nextInt();
 						if(rep == 0) break;
-						q.ajouterBonneReponse(rep-1);
+						if(rep > 0 && rep <= nb) q.ajouterBonneReponse(rep-1);
 					}
 					clavier.nextLine();
 					
-					qDao.sauvegarderQuestion(q);
+					// IMPORTANT : On ajoute seulement à l'objet, on ne sauvegarde pas encore en BDD
+					// C'est ExamenDAO qui fera le travail de groupe à la fin
 					examen.ajouterQuestion(q);
 					
 					System.out.print("Autre question ? (1=Oui, 0=Non) : ");
@@ -124,9 +125,10 @@ public class MenuProfesseur {
 					clavier.nextLine();
 				}
 				
+				// SAUVEGARDE FINALE
+				// ExamenDAO va sauvegarder l'examen ET ses questions en cascade
 				ExamenDAO eDao = new ExamenDAO();
 				eDao.sauvegarderExamen(examen);
-				System.out.println("✅ Examen '" + titre + "' créé (ID: " + examen.getId() + ")");
 			}
 			
 			// === OPTION 2 : VOIR LES RÉSULTATS ===
@@ -145,7 +147,6 @@ public class MenuProfesseur {
 					System.out.println(String.format("%-20s | %s", "ÉTUDIANT", "NOTE / 20"));
 					System.out.println("------------------------------------------------");
 					for (Resultat r : liste) {
-						// Affichage aligné (String format)
 						System.out.println(String.format("%-20s | %5.2f", r.getNomEtudiant(), r.getNote()));
 					}
 					System.out.println("------------------------------------------------");
