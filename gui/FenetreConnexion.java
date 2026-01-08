@@ -168,7 +168,15 @@ public class FenetreConnexion extends JFrame {
                 Professeur prof = dao.trouverParNom(nom);
                 if (prof != null) {
                     JOptionPane.showMessageDialog(this, "Bienvenue Prof. " + prof.getNomComplet());
-                    // TODO : Ouvrir le Dashboard Professeur
+                 // Dans FenetreConnexion.java :
+
+                    if (prof != null) {
+                        JOptionPane.showMessageDialog(this, "Bienvenue Prof. " + prof.getNomComplet());
+                        
+                        // OUVERTURE DU DASHBOARD
+                        new DashboardProfesseur(prof).setVisible(true);
+                        this.dispose(); // Ferme la fenêtre de connexion
+                    }
                     // new DashboardProfesseur(prof).setVisible(true);
                     // this.dispose();
                 } else {
