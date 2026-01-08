@@ -1,6 +1,8 @@
 package modele;
 
 import dao.Connexion;
+import dao.ExamenDAO;
+import dao.ProfesseurDAO;
 import dao.QuestionDAO;
 import modele.Examen;
 import modele.Professeur;
@@ -45,30 +47,37 @@ public class Main {
 		//------------------------------------------------------------------------//
 		
 		
+System.out.println("--- SCÉNARIO COMPLET DE CRÉATION ---");
 		
-		System.out.println("--- DÉBUT DU TEST BASE DE DONNÉES ---");
-
-		// 1. Création d'une question en Java (Mémoire RAM)
-		Question q = new Question("Quel langage utilise-t-on pour Android ?");
+		// 1. Créer et Sauver le PROFESSEUR
+		Professeur prof1 = new Professeur("Dr. Amansour", "Informatique");
+		ProfesseurDAO profDao = new ProfesseurDAO();
+		profDao.sauvegarderProfesseur(prof1); // Hop, il est dans la BDD, il a un ID !
 		
-		// 2. Ajout des choix
-		q.ajouterChoix("Python"); // index 0
-		q.ajouterChoix("Java");   // index 1
-		q.ajouterChoix("C++");    // index 2
-		q.ajouterChoix("Kotlin"); // index 3
+		// 2. Créer et Sauver une QUESTION
+		Question q11 = new Question("Quelle est la capitale du Maroc ?");
+		q11.ajouterChoix("Casablanca");
+		q11.ajouterChoix("Rabat");
+		q11.ajouterChoix("Marrakech");
+		q11.ajouterBonneReponse(1); // Rabat
 		
-		// 3. Définition des bonnes réponses (Java et Kotlin sont valides)
-		q.ajouterBonneReponse(1);
-		q.ajouterBonneReponse(3);
+		QuestionDAO qDao = new QuestionDAO();
+		qDao.sauvegarderQuestion(q11); // Hop, elle est dans la BDD, elle a un ID !
 		
-		// 4. Appel du DAO pour envoyer tout ça dans MySQL
-		QuestionDAO dao = new QuestionDAO();
+		// 3. Créer l'EXAMEN
+		Examen exam1 = new Examen("Examen Final Java", "Génie Info", "M1", prof1);
+		exam1.setBareme(2.0, -1.0, 0.0); // Barème strict
 		
-		System.out.println("Envoi de la question à la base de données...");
-		dao.sauvegarderQuestion(q);
+		// 4. Ajouter la question (qui vient de la BDD) à l'examen
+		exam1.ajouterQuestion(q11);
 		
-		System.out.println("--- FIN DU TEST ---");
+		// 5. Sauvegarder l'EXAMEN (et le lien avec la question)
+		ExamenDAO examDao = new ExamenDAO();
+		examDao.sauvegarderExamen(exam1);
+		
+		System.out.println("--- FIN DU SCÉNARIO ---");
+		
+		
+		
 	}
-		
-		
-	}
+}
