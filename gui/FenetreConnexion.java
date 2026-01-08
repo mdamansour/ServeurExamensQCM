@@ -18,7 +18,7 @@ public class FenetreConnexion extends JFrame {
 
     // Champs supplémentaires pour l'inscription
     private JTextField txtFiliere;
-    private JTextField txtNiveau; // Ou Specialité pour le prof
+    private JTextField txtNiveau; // Ou Spécialité pour le prof
     private JPanel panelDetails; // Le panneau qui change selon l'action
 
     public FenetreConnexion() {
@@ -115,7 +115,7 @@ public class FenetreConnexion extends JFrame {
     private void updateLabels() {
         String role = (String) comboRole.getSelectedItem();
         if(role.equals("Professeur")) {
-            // Le label 0 du panelDetails est "Filière..."
+            // Le label 0 du panelDetails est "Filière..." devient "Spécialité"
             ((JLabel)panelDetails.getComponent(0)).setText("Spécialité :");
             // On cache le niveau pour le prof car il n'en a pas besoin
             panelDetails.getComponent(2).setVisible(false); 
@@ -127,7 +127,7 @@ public class FenetreConnexion extends JFrame {
         }
     }
 
-    // Le Cœur du système : Appel aux DAO
+    // Le Cœur du système : Appel aux DAO et Ouverture des Dashboards
     private void traiterAction() {
         String role = (String) comboRole.getSelectedItem();
         String action = (String) comboAction.getSelectedItem();
@@ -138,56 +138,52 @@ public class FenetreConnexion extends JFrame {
             return;
         }
 
+        // --- CAS 1 : ÉTUDIANT ---
         if (role.equals("Étudiant")) {
             EtudiantDAO dao = new EtudiantDAO();
             
             if (action.equals("Se connecter")) {
                 Etudiant etu = dao.trouverParNom(nom);
+                
                 if (etu != null) {
                     JOptionPane.showMessageDialog(this, "Bienvenue " + etu.getNomComplet());
-                    // TODO : Ouvrir le Dashboard Etudiant
-                    // new DashboardEtudiant(etu).setVisible(true);
-                    // this.dispose();
+                    // OUVERTURE DASHBOARD ÉTUDIANT
+                    new DashboardEtudiant(etu).setVisible(true);
+                    this.dispose(); // Fermer la fenêtre de connexion
                 } else {
-                    JOptionPane.showMessageDialog(this, "Étudiant inconnu.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Étudiant inconnu. Veuillez vous inscrire.", "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                // Inscription
+                // Inscription Étudiant
                 String filiere = txtFiliere.getText();
                 String niveau = txtNiveau.getText();
                 Etudiant nouveau = new Etudiant(nom, filiere, niveau);
                 dao.sauvegarderEtudiant(nouveau);
-                JOptionPane.showMessageDialog(this, "Compte créé ! Connectez-vous maintenant.");
+                JOptionPane.showMessageDialog(this, "Compte étudiant créé ! Connectez-vous maintenant.");
                 comboAction.setSelectedItem("Se connecter"); // Basculer auto vers login
             }
         } 
+        // --- CAS 2 : PROFESSEUR ---
         else if (role.equals("Professeur")) {
             ProfesseurDAO dao = new ProfesseurDAO();
             
             if (action.equals("Se connecter")) {
                 Professeur prof = dao.trouverParNom(nom);
+                
                 if (prof != null) {
                     JOptionPane.showMessageDialog(this, "Bienvenue Prof. " + prof.getNomComplet());
-                 // Dans FenetreConnexion.java :
-
-                    if (prof != null) {
-                        JOptionPane.showMessageDialog(this, "Bienvenue Prof. " + prof.getNomComplet());
-                        
-                        // OUVERTURE DU DASHBOARD
-                        new DashboardProfesseur(prof).setVisible(true);
-                        this.dispose(); // Ferme la fenêtre de connexion
-                    }
-                    // new DashboardProfesseur(prof).setVisible(true);
-                    // this.dispose();
+                    // OUVERTURE DASHBOARD PROFESSEUR
+                    new DashboardProfesseur(prof).setVisible(true);
+                    this.dispose(); // Fermer la fenêtre de connexion
                 } else {
-                    JOptionPane.showMessageDialog(this, "Professeur inconnu.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Professeur inconnu. Veuillez vous inscrire.", "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Inscription Prof (utilise txtFiliere comme Spécialité)
                 String specialite = txtFiliere.getText(); 
                 Professeur nouveau = new Professeur(nom, specialite);
                 dao.sauvegarderProfesseur(nouveau);
-                JOptionPane.showMessageDialog(this, "Compte Prof créé !");
+                JOptionPane.showMessageDialog(this, "Compte Professeur créé ! Connectez-vous maintenant.");
                 comboAction.setSelectedItem("Se connecter");
             }
         }
