@@ -28,6 +28,17 @@ public class Question {
 	}
 	
 	
+	// methodes
+	public void ajouterChoix(String unChoix) {
+		this.choix.add(unChoix);
+	}
+	
+	public void ajouterBonneReponse(int index) {
+		if (!this.bonnesReponses.contains(index)) {
+			this.bonnesReponses.add(index);
+		}
+	}
+	
 	
 	
 	// getters and setters
@@ -70,8 +81,6 @@ public class Question {
 	public void setMedia(String media) {
 		this.media = media;
 	}
-	
-	
 	
 	@Override
 	public String toString() {
