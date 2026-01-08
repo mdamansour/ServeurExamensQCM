@@ -1,13 +1,16 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import dao.ExamenDAO;
 import dao.ProfesseurDAO;
 import dao.QuestionDAO;
+import dao.ResultatDAO;
 import modele.Examen;
 import modele.Professeur;
 import modele.Question;
+import modele.Resultat;
 
 public class MenuProfesseur {
 
@@ -17,127 +20,138 @@ public class MenuProfesseur {
 		Professeur profConnecte = null;
 		
 		System.out.println("==========================================");
-		System.out.println("   ESPACE PROFESSEUR - CRÉATION D'EXAMEN  ");
+		System.out.println("        ESPACE PROFESSEUR - GESTION       ");
 		System.out.println("==========================================");
 		
-		// --- PARTIE 1 : IDENTIFICATION ---
+		// --- PHASE 1 : LOGIN / INSCRIPTION ---
 		while (profConnecte == null) {
-			System.out.println("1. Je suis un nouveau professeur (Inscription)");
-			System.out.println("2. Je suis déjà inscrit (Login)");
-			System.out.print("👉 Votre choix : ");
+			System.out.println("1. Nouveau professeur (Inscription)");
+			System.out.println("2. Déjà inscrit (Login)");
+			System.out.print("👉 Choix : ");
 			int choix = clavier.nextInt();
-			clavier.nextLine(); // Vider le buffer
+			clavier.nextLine(); // Vider buffer
 			
 			if (choix == 1) {
-				System.out.print("Entrez votre Nom Complet : ");
+				System.out.print("Nom Complet : ");
 				String nom = clavier.nextLine();
-				System.out.print("Entrez votre Spécialité : ");
+				System.out.print("Spécialité : ");
 				String spec = clavier.nextLine();
 				profConnecte = new Professeur(nom, spec);
 				profDao.sauvegarderProfesseur(profConnecte); 
-				System.out.println("✅ Compte créé ! Bienvenue Prof. " + nom);
+				System.out.println("✅ Bienvenue Prof. " + nom);
 				
 			} else if (choix == 2) {
-				System.out.print("Entrez votre Nom Exact : ");
+				System.out.print("Nom Exact : ");
 				String nom = clavier.nextLine();
 				profConnecte = profDao.trouverParNom(nom);
 				
 				if (profConnecte != null) {
-					System.out.println("👋 Bon retour, Prof. " + profConnecte.getNomComplet());
+					System.out.println("👋 Bonjour Prof. " + profConnecte.getNomComplet());
 				} else {
-					System.out.println("❌ Professeur introuvable. Réessayez.");
+					System.out.println("❌ Inconnu.");
 				}
 			}
 		}
 		
-		// --- PARTIE 2 : CONFIGURATION DE L'EXAMEN ---
-		System.out.println("\n--- NOUVEL EXAMEN ---");
-		System.out.print("Titre de l'examen : ");
-		String titre = clavier.nextLine();
-		System.out.print("Filière cible : ");
-		String filiere = clavier.nextLine();
-		System.out.print("Niveau cible : ");
-		String niveau = clavier.nextLine();
-		
-		Examen examen = new Examen(titre, filiere, niveau, profConnecte);
-		
-		System.out.println("\n--- CONFIGURATION DU BARÈME ---");
-		System.out.print("Points si JUSTE (ex: 2) : ");
-		double pJuste = clavier.nextDouble();
-		System.out.print("Points si FAUX (ex: -1) : ");
-		double pFaux = clavier.nextDouble();
-		System.out.print("Points si VIDE (ex: 0) : ");
-		double pVide = clavier.nextDouble();
-		clavier.nextLine(); 
-		
-		examen.setBareme(pJuste, pFaux, pVide);
-		
-		// --- PARTIE 3 : AJOUT DES QUESTIONS (LOGIQUE AMÉLIORÉE) ---
-		boolean continuer = true;
-		QuestionDAO questionDao = new QuestionDAO();
-		
-		while (continuer) {
-			System.out.println("\n--- AJOUT D'UNE QUESTION ---");
-			System.out.print("Énoncé de la question : ");
-			String enonce = clavier.nextLine();
-			
-			Question q = new Question(enonce);
-			
-			// 3.1 Ajout des choix
-			System.out.print("Combien de choix possibles ? ");
-			int nbChoix = clavier.nextInt();
-			clavier.nextLine(); 
-			
-			for (int i = 0; i < nbChoix; i++) {
-				System.out.print("   > Choix n°" + (i+1) + " : ");
-				String texteChoix = clavier.nextLine();
-				q.ajouterChoix(texteChoix);
-			}
-			
-			// 3.2 Définition des bonnes réponses (BOUCLE DE SÉCURITÉ)
-			System.out.println("Quelles sont les bonnes réponses ?");
-			boolean ajoutReponses = true;
-			
-			while (ajoutReponses) {
-				System.out.print("👉 Entrez le numéro d'une réponse correcte (ou 0 pour finir) : ");
-				int numRep = clavier.nextInt();
-				
-				if (numRep == 0) {
-					// On vérifie qu'il y a au moins une réponse correcte avant de sortir
-					if (q.getBonnesReponses().isEmpty()) {
-						System.out.println("⚠️ Erreur : Il faut au moins une réponse correcte !");
-					} else {
-						ajoutReponses = false; // On sort de la boucle
-					}
-				} 
-				else if (numRep < 1 || numRep > nbChoix) {
-					// SÉCURITÉ : On empêche de choisir une réponse qui n'existe pas
-					System.out.println("❌ Erreur : Le choix " + numRep + " n'existe pas. (Max: " + nbChoix + ")");
-				} 
-				else {
-					// Tout est bon, on ajoute (Attention : numRep 1 devient index 0)
-					q.ajouterBonneReponse(numRep - 1);
-					System.out.println("✅ Réponse " + numRep + " marquée comme correcte.");
-				}
-			}
-			clavier.nextLine(); // Vider buffer après les int
-			
-			// SAUVEGARDE
-			questionDao.sauvegarderQuestion(q);
-			examen.ajouterQuestion(q);
-			
-			System.out.print("\nVoulez-vous ajouter une autre question ? (1=Oui, 0=Non) : ");
-			int rep = clavier.nextInt();
+		// --- PHASE 2 : MENU PRINCIPAL ---
+		boolean sessionActive = true;
+		while (sessionActive) {
+			System.out.println("\n--------------------------------");
+			System.out.println("QUE VOULEZ-VOUS FAIRE ?");
+			System.out.println("1. 📝 Créer un nouvel Examen");
+			System.out.println("2. 📊 Voir les résultats d'un Examen");
+			System.out.println("0. 🚪 Quitter");
+			System.out.print("👉 Votre choix : ");
+			int action = clavier.nextInt();
 			clavier.nextLine();
-			if (rep == 0) continuer = false;
+			
+			if (action == 0) {
+				sessionActive = false;
+				System.out.println("Au revoir !");
+			}
+			
+			// === OPTION 1 : CRÉATION D'EXAMEN ===
+			else if (action == 1) {
+				System.out.println("\n--- NOUVEL EXAMEN ---");
+				System.out.print("Titre : ");
+				String titre = clavier.nextLine();
+				System.out.print("Filière : ");
+				String filiere = clavier.nextLine();
+				System.out.print("Niveau : ");
+				String niveau = clavier.nextLine();
+				
+				Examen examen = new Examen(titre, filiere, niveau, profConnecte);
+				
+				System.out.print("Points Juste (+): ");
+				double pJuste = clavier.nextDouble();
+				System.out.print("Points Faux (-): ");
+				double pFaux = clavier.nextDouble();
+				System.out.print("Points Vide (0): ");
+				double pVide = clavier.nextDouble();
+				clavier.nextLine();
+				examen.setBareme(pJuste, pFaux, pVide);
+				
+				// Boucle Question
+				boolean ajoutQ = true;
+				QuestionDAO qDao = new QuestionDAO();
+				
+				while (ajoutQ) {
+					System.out.print("\nÉnoncé Question : ");
+					String enonce = clavier.nextLine();
+					Question q = new Question(enonce);
+					
+					System.out.print("Nb Choix : ");
+					int nb = clavier.nextInt();
+					clavier.nextLine();
+					for(int i=0; i<nb; i++) {
+						System.out.print(" > Choix " + (i+1) + ": ");
+						q.ajouterChoix(clavier.nextLine());
+					}
+					
+					System.out.println("Bonnes réponses (ex: 1). Tapez 0 pour finir.");
+					while(true) {
+						int rep = clavier.nextInt();
+						if(rep == 0) break;
+						q.ajouterBonneReponse(rep-1);
+					}
+					clavier.nextLine();
+					
+					qDao.sauvegarderQuestion(q);
+					examen.ajouterQuestion(q);
+					
+					System.out.print("Autre question ? (1=Oui, 0=Non) : ");
+					if(clavier.nextInt() == 0) ajoutQ = false;
+					clavier.nextLine();
+				}
+				
+				ExamenDAO eDao = new ExamenDAO();
+				eDao.sauvegarderExamen(examen);
+				System.out.println("✅ Examen '" + titre + "' créé (ID: " + examen.getId() + ")");
+			}
+			
+			// === OPTION 2 : VOIR LES RÉSULTATS ===
+			else if (action == 2) {
+				System.out.print("\nEntrez l'ID de l'examen à consulter : ");
+				int idRecherche = clavier.nextInt();
+				
+				ResultatDAO rDao = new ResultatDAO();
+				ArrayList<Resultat> liste = rDao.getResultatsParExamen(idRecherche);
+				
+				System.out.println("\n--- RÉSULTATS POUR L'EXAMEN ID " + idRecherche + " ---");
+				if (liste.isEmpty()) {
+					System.out.println("Aucune note enregistrée pour le moment.");
+				} else {
+					System.out.println("------------------------------------------------");
+					System.out.println(String.format("%-20s | %s", "ÉTUDIANT", "NOTE / 20"));
+					System.out.println("------------------------------------------------");
+					for (Resultat r : liste) {
+						// Affichage aligné (String format)
+						System.out.println(String.format("%-20s | %5.2f", r.getNomEtudiant(), r.getNote()));
+					}
+					System.out.println("------------------------------------------------");
+				}
+			}
 		}
-		
-		// --- PARTIE 4 : SAUVEGARDE FINALE ---
-		System.out.println("\nEnregistrement de l'examen complet...");
-		ExamenDAO examenDao = new ExamenDAO();
-		examenDao.sauvegarderExamen(examen);
-		
-		System.out.println("✅ EXAMEN CRÉÉ AVEC SUCCÈS ! (ID : " + examen.getId() + ")");
 		clavier.close();
 	}
 }

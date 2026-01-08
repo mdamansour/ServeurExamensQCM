@@ -114,6 +114,36 @@ public class ExamenDAO {
 		return exam;
 	}
 	
-	
+	// NOUVEAU : Trouver les examens selon le niveau et la filière de l'étudiant
+		public java.util.ArrayList<Examen> getExamensDisponibles(String niveau, String filiere) {
+			Connection cnx = Connexion.getConnexion();
+			java.util.ArrayList<Examen> liste = new java.util.ArrayList<>();
+			
+			try {
+				// On filtre par niveau ET filière
+				String sql = "SELECT * FROM examen WHERE niveau = ? AND filiere = ?";
+				PreparedStatement ps = cnx.prepareStatement(sql);
+				ps.setString(1, niveau);
+				ps.setString(2, filiere);
+				
+				ResultSet rs = ps.executeQuery();
+				
+				// Pour l'affichage de la liste, on n'a pas besoin de charger toutes les questions
+				// On charge juste les infos de base (Titre, ID...)
+				while (rs.next()) {
+					Examen e = new Examen(
+						rs.getInt("id"), 
+						rs.getString("titre"), 
+						rs.getString("filiere"), 
+						rs.getString("niveau"), 
+						null, 0,0,0 // On s'en fiche du reste pour l'instant
+					);
+					liste.add(e);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return liste;
+		}
 	
 }

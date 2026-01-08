@@ -63,4 +63,63 @@ public class ResultatDAO {
 		
 		return listeResultats;
 	}
+	
+	
+	// Vérifie si un étudiant a déjà une note pour cet examen
+	public boolean aDejaPasse(int idEtudiant, int idExamen) {
+		Connection cnx = Connexion.getConnexion();
+		boolean existe = false;
+		
+		try {
+			String sql = "SELECT COUNT(*) FROM resultat WHERE id_etudiant = ? AND id_examen = ?";
+			PreparedStatement ps = cnx.prepareStatement(sql);
+			ps.setInt(1, idEtudiant);
+			ps.setInt(2, idExamen);
+			
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				// Si le compteur est > 0, c'est qu'il l'a déjà passé
+				if (rs.getInt(1) > 0) {
+					existe = true;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return existe;
+	}
+	
+	
+	// NOUVEAU : Voir mes propres notes
+		public java.util.ArrayList<String> getHistoriqueEtudiant(int idEtudiant) {
+			Connection cnx = Connexion.getConnexion();
+			java.util.ArrayList<String> historique = new java.util.ArrayList<>();
+			
+			try {
+				// Jointure pour récupérer le TITRE de l'examen avec la NOTE
+				String sql = "SELECT e.titre, r.note_sur_20, r.date_passage "
+						   + "FROM resultat r "
+						   + "JOIN examen e ON r.id_examen = e.id "
+						   + "WHERE r.id_etudiant = ?";
+				
+				PreparedStatement ps = cnx.prepareStatement(sql);
+				ps.setInt(1, idEtudiant);
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next()) {
+					String ligne = "Examen : " + rs.getString("titre") 
+								 + " | Note : " + rs.getDouble("note_sur_20") + "/20"
+								 + " (" + rs.getTimestamp("date_passage") + ")";
+					historique.add(ligne);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return historique;
+		}
+	
+	
+	
+	
 }
