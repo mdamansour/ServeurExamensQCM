@@ -57,4 +57,55 @@ public class QuestionDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	// Méthode pour RÉCUPÉRER une question complète (avec ses choix) depuis la BDD
+	public Question getQuestionParId(int id) {
+		Connection cnx = Connexion.getConnexion();
+		Question q = null;
+		
+		try {
+			// 1. On récupère les infos de base (Enoncé, Média)
+			String sql = "SELECT * FROM question WHERE id = ?";
+			PreparedStatement ps = cnx.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				// On crée l'objet Question
+				String enonce = rs.getString("enonce");
+				String media = rs.getString("media");
+				q = new Question(id, enonce, media); // Utilise le constructeur complet
+				
+				// 2. On récupère les CHOIX associés
+				String sqlChoix = "SELECT * FROM choix WHERE id_question = ?";
+				PreparedStatement psChoix = cnx.prepareStatement(sqlChoix);
+				psChoix.setInt(1, id);
+				ResultSet rsChoix = psChoix.executeQuery();
+				
+				// On boucle sur les lignes trouvées dans la table 'choix'
+				int index = 0;
+				while (rsChoix.next()) {
+					String texte = rsChoix.getString("texte_choix");
+					boolean estCorrect = rsChoix.getBoolean("est_correct");
+					
+					// On ajoute le texte à la liste des choix
+					q.ajouterChoix(texte);
+					
+					// Si c'est correct, on ajoute l'index à la liste des bonnes réponses
+					if (estCorrect) {
+						q.ajouterBonneReponse(index);
+					}
+					index++;
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return q; // Retourne l'objet rempli (ou null si pas trouvé)
+	}
+	
+	
 }

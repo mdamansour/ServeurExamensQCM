@@ -61,4 +61,59 @@ public class ExamenDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	// Méthode pour CHARGER un examen complet (avec ses questions)
+	public Examen getExamenParId(int id) {
+		Connection cnx = Connexion.getConnexion();
+		Examen exam = null;
+		
+		try {
+			// 1. Récupérer les infos de l'examen
+			String sql = "SELECT * FROM examen WHERE id = ?";
+			PreparedStatement ps = cnx.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				String titre = rs.getString("titre");
+				String filiere = rs.getString("filiere");
+				String niveau = rs.getString("niveau");
+				
+				double pJuste = rs.getDouble("point_si_juste");
+				double pFaux = rs.getDouble("point_si_faux");
+				double pVide = rs.getDouble("point_si_vide");
+				
+				// ASTUCE : Pour l'instant, on met un prof "null" ou vide pour simplifier
+				// (Sinon il faudrait aussi appeler ProfesseurDAO)
+				modele.Professeur profInconnu = new modele.Professeur("Prof (chargé)", "Inconnu");
+				
+				// On crée l'objet Examen
+				exam = new Examen(id, titre, filiere, niveau, profInconnu, pJuste, pFaux, pVide);
+				
+				// 2. Récupérer les ID des questions liées
+				String sqlLien = "SELECT id_question FROM examen_question WHERE id_examen = ?";
+				PreparedStatement psLien = cnx.prepareStatement(sqlLien);
+				psLien.setInt(1, id);
+				ResultSet rsLien = psLien.executeQuery();
+				
+				// Pour chaque ID trouvé, on charge la question complète via QuestionDAO
+				QuestionDAO qDao = new QuestionDAO();
+				while (rsLien.next()) {
+					int idQuestion = rsLien.getInt("id_question");
+					Question q = qDao.getQuestionParId(idQuestion);
+					if (q != null) {
+						exam.ajouterQuestion(q);
+					}
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return exam;
+	}
+	
+	
+	
 }
