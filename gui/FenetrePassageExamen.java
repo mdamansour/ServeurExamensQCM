@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 import dao.ResultatDAO;
@@ -22,9 +23,10 @@ public class FenetrePassageExamen extends JFrame {
     // Composants graphiques
     private JLabel lblTitre, lblProgress;
     private JTextArea txtEnonce;
-    private JPanel panelChoix; // Contiendra les checkboxes
+    private JPanel panelMediaContainer; // Zone pour l'image ou le bouton vidéo
+    private JPanel panelChoix; 
     private JButton btnSuivant;
-    private ArrayList<JCheckBox> checkboxesActuelles; // Pour lire les réponses
+    private ArrayList<JCheckBox> checkboxesActuelles;
 
     public FenetrePassageExamen(Examen examen, Etudiant etudiant) {
         this.examen = examen;
@@ -32,8 +34,8 @@ public class FenetrePassageExamen extends JFrame {
         this.checkboxesActuelles = new ArrayList<>();
 
         setTitle("Examen : " + examen.getTitre());
-        setSize(600, 500);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Empêche de fermer accidentellement
+        setSize(700, 650); // Un peu plus grand pour l'image
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -47,9 +49,11 @@ public class FenetrePassageExamen extends JFrame {
         panelNord.add(lblProgress);
         add(panelNord, BorderLayout.NORTH);
 
-        // 2. Centre (Question + Choix)
-        JPanel panelCentre = new JPanel(new BorderLayout());
+        // 2. Centre (Enoncé + Média + Choix)
+        JPanel panelCentre = new JPanel();
+        panelCentre.setLayout(new BoxLayout(panelCentre, BoxLayout.Y_AXIS));
         
+        // A. Enoncé
         txtEnonce = new JTextArea();
         txtEnonce.setEditable(false);
         txtEnonce.setLineWrap(true);
@@ -58,23 +62,30 @@ public class FenetrePassageExamen extends JFrame {
         txtEnonce.setBackground(new Color(240, 240, 240));
         txtEnonce.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        panelCentre.add(txtEnonce, BorderLayout.NORTH);
+        panelCentre.add(txtEnonce);
 
-        // Zone des choix (défilable)
+        // B. Zone Média (Image ou Bouton)
+        panelMediaContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelCentre.add(panelMediaContainer);
+
+        // C. Zone Choix (Scrollable)
         panelChoix = new JPanel();
         panelChoix.setLayout(new BoxLayout(panelChoix, BoxLayout.Y_AXIS));
-        JScrollPane scroll = new JScrollPane(panelChoix);
-        panelCentre.add(scroll, BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(panelCentre); // On scroll tout le centre
+        
+        // On ajoute les choix au panelCentre via un autre container pour éviter que le scroll casse tout
+        JPanel containerChoix = new JPanel(new BorderLayout());
+        containerChoix.add(panelChoix, BorderLayout.NORTH);
+        panelCentre.add(containerChoix);
 
-        add(panelCentre, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
 
-        // 3. Bas (Bouton)
+        // 3. Bas (Bouton Valider)
         btnSuivant = new JButton("Valider et Suivant ➡️");
         btnSuivant.setFont(new Font("Arial", Font.BOLD, 14));
         btnSuivant.setBackground(new Color(52, 152, 219));
         btnSuivant.setForeground(Color.WHITE);
         
-        // Marge autour du bouton
         JPanel panelSud = new JPanel();
         panelSud.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         panelSud.add(btnSuivant);
@@ -95,20 +106,63 @@ public class FenetrePassageExamen extends JFrame {
             lblProgress.setText("Question " + (indexQuestionCourante + 1) + " / " + examen.getQuestions().size());
             txtEnonce.setText(q.getEnonce());
 
-            // Nettoyage des anciens choix
+            // --- GESTION DU MÉDIA (NOUVEAU) ---
+            panelMediaContainer.removeAll(); // On vide l'ancien média
+            
+            if (q.getMedia() != null && !q.getMedia().isEmpty()) {
+                File fichierMedia = new File(q.getMedia());
+                
+                if (fichierMedia.exists()) {
+                    String nom = fichierMedia.getName().toLowerCase();
+                    
+                    // Si c'est une IMAGE -> On l'affiche
+                    if (nom.endsWith(".jpg") || nom.endsWith(".png") || nom.endsWith(".jpeg") || nom.endsWith(".gif")) {
+                        try {
+                            ImageIcon icon = new ImageIcon(fichierMedia.getPath());
+                            // Redimensionnement intelligent (Max 400px de large)
+                            Image img = icon.getImage();
+                            int newWidth = 400;
+                            int newHeight = (int) ((double) icon.getIconHeight() / icon.getIconWidth() * newWidth);
+                            Image newImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+                            
+                            JLabel lblImage = new JLabel(new ImageIcon(newImg));
+                            panelMediaContainer.add(lblImage);
+                            
+                        } catch (Exception e) {
+                            panelMediaContainer.add(new JLabel("Erreur affichage image"));
+                        }
+                    } 
+                    // Si c'est VIDÉO ou AUDIO -> Bouton "Ouvrir"
+                    else {
+                        JButton btnOuvrir = new JButton("▶️ Ouvrir le fichier média (" + nom + ")");
+                        btnOuvrir.setBackground(Color.ORANGE);
+                        btnOuvrir.addActionListener(e -> {
+                            try {
+                                Desktop.getDesktop().open(fichierMedia);
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(this, "Impossible d'ouvrir le fichier : " + ex.getMessage());
+                            }
+                        });
+                        panelMediaContainer.add(btnOuvrir);
+                    }
+                }
+            }
+            panelMediaContainer.revalidate();
+            panelMediaContainer.repaint();
+
+            // --- GESTION DES CHOIX ---
             panelChoix.removeAll();
             checkboxesActuelles.clear();
 
-            // Création des Checkboxes
             for (String choixTexte : q.getChoix()) {
                 JCheckBox chk = new JCheckBox(choixTexte);
                 chk.setFont(new Font("Arial", Font.PLAIN, 14));
                 panelChoix.add(chk);
-                panelChoix.add(Box.createVerticalStrut(5)); // Espace
+                panelChoix.add(Box.createVerticalStrut(5));
                 checkboxesActuelles.add(chk);
             }
 
-            // Rafraîchir l'affichage
+            // Rafraîchir l'affichage global
             panelChoix.revalidate();
             panelChoix.repaint();
             
@@ -120,7 +174,6 @@ public class FenetrePassageExamen extends JFrame {
     private void traiterReponse() {
         Question q = examen.getQuestions().get(indexQuestionCourante);
         
-        // 1. Récupérer les index cochés
         ArrayList<Integer> reponsesCochees = new ArrayList<>();
         boolean auMoinsUneCochee = false;
         
@@ -131,44 +184,34 @@ public class FenetrePassageExamen extends JFrame {
             }
         }
 
-        // 2. Calcul des points
         double pointsQuestion = 0;
-        
         if (!auMoinsUneCochee) {
             pointsQuestion = examen.getPointSiVide();
         } else {
-            // APPEL AU CERVEAU (Modèle)
             pointsQuestion = q.calculerScore(reponsesCochees, examen.getPointSiJuste(), examen.getPointSiFaux());
         }
         
-        // Mise à jour des totaux
         noteCumulee += pointsQuestion;
         noteMaxPossible += q.getScoreMaxPossible(examen.getPointSiJuste());
 
-        // 3. Passer à la suivante
         indexQuestionCourante++;
         afficherQuestion();
     }
 
     private void finirExamen() {
-        // Calcul final / 20
         double noteSur20 = 0.0;
         if (noteMaxPossible > 0) {
             noteSur20 = (noteCumulee / noteMaxPossible) * 20;
         }
         if (noteSur20 < 0) noteSur20 = 0.0;
 
-        // Sauvegarde BDD
         ResultatDAO dao = new ResultatDAO();
         dao.sauvegarderResultat(etudiant.getId(), examen.getId(), noteSur20);
 
-        // Affichage Résultat
         String msg = String.format("Examen terminé !\n\nVotre Note : %.2f / 20\n\n(Détail : %.1f / %.1f points)", 
                                    noteSur20, noteCumulee, noteMaxPossible);
         
         JOptionPane.showMessageDialog(this, msg, "Résultats", JOptionPane.INFORMATION_MESSAGE);
-        
-        // Fermer la fenêtre
         this.dispose();
     }
 }

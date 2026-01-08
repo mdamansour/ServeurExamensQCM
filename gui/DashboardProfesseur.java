@@ -1,8 +1,12 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 import dao.ExamenDAO;
@@ -32,7 +36,7 @@ public class DashboardProfesseur extends JFrame {
         this.questionsEnAttente = new ArrayList<>();
 
         setTitle("Espace Professeur - " + prof.getNomComplet());
-        setSize(900, 650);
+        setSize(950, 700); // Un peu plus grand pour être à l'aise
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -126,19 +130,73 @@ public class DashboardProfesseur extends JFrame {
 
     private void ouvrirDialogAjoutQuestionDynamique() {
         JDialog d = new JDialog(this, "Nouvelle Question", true);
-        d.setSize(500, 500);
+        d.setSize(600, 600);
         d.setLocationRelativeTo(this);
         d.setLayout(new BorderLayout());
 
-        // 1. Enoncé
+        // --- HAUT : Énoncé + Média ---
         JPanel panelNord = new JPanel(new BorderLayout());
         panelNord.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Zone Texte Enoncé
         panelNord.add(new JLabel("Énoncé de la question :"), BorderLayout.NORTH);
         JTextArea txtEnonce = new JTextArea(3, 40);
+        txtEnonce.setLineWrap(true);
         panelNord.add(new JScrollPane(txtEnonce), BorderLayout.CENTER);
+        
+        // Zone Média (Gestion du fichier)
+        JPanel panelMedia = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton btnMedia = new JButton("📎 Joindre Image/Vidéo/Audio");
+        JLabel lblMediaSelect = new JLabel("Aucun fichier sélectionné");
+        lblMediaSelect.setForeground(Color.GRAY);
+        
+        // Tableau à 1 case pour stocker le chemin dans la lambda
+        final String[] mediaPath = { null }; 
+
+        btnMedia.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            // Filtre pour n'afficher que les fichiers médias
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Fichiers Média (Images, Audio, Vidéo)", "jpg", "jpeg", "png", "gif", "mp4", "mp3", "wav");
+            chooser.setFileFilter(filter);
+            
+            int returnVal = chooser.showOpenDialog(d);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File sourceFile = chooser.getSelectedFile();
+                
+                try {
+                    // 1. Créer le dossier 'media_files' s'il n'existe pas
+                    File destFolder = new File("media_files");
+                    if (!destFolder.exists()) {
+                        destFolder.mkdir();
+                    }
+                    
+                    // 2. Générer un nom unique (Timestamp + Nom original)
+                    String nomUnique = System.currentTimeMillis() + "_" + sourceFile.getName();
+                    File destFile = new File(destFolder, nomUnique);
+                    
+                    // 3. Copier le fichier
+                    Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    
+                    // 4. Stocker le chemin relatif
+                    mediaPath[0] = destFile.getPath(); // ex: media_files/123_chat.jpg
+                    
+                    lblMediaSelect.setText("✅ " + sourceFile.getName());
+                    lblMediaSelect.setForeground(new Color(0, 128, 0)); // Vert
+                    
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(d, "Erreur copie fichier : " + ex.getMessage());
+                }
+            }
+        });
+
+        panelMedia.add(btnMedia);
+        panelMedia.add(lblMediaSelect);
+        panelNord.add(panelMedia, BorderLayout.SOUTH);
+
         d.add(panelNord, BorderLayout.NORTH);
 
-        // 2. Container des choix
+        // --- CENTRE : Choix ---
         JPanel panelChoixContainer = new JPanel();
         panelChoixContainer.setLayout(new BoxLayout(panelChoixContainer, BoxLayout.Y_AXIS)); 
         JScrollPane scrollChoix = new JScrollPane(panelChoixContainer);
@@ -157,12 +215,12 @@ public class DashboardProfesseur extends JFrame {
             panelChoixContainer.repaint();
         };
 
-        // --- MODIFICATION ICI : 3 choix par défaut ---
+        // 3 choix par défaut
         for(int i = 0; i < 3; i++) {
             ajouterLigne.run();
         }
 
-        // 3. Boutons du bas
+        // --- BAS : Validation ---
         JPanel panelSud = new JPanel(new FlowLayout());
         JButton btnAddChoice = new JButton("Ajouter un choix");
         JButton btnValider = new JButton("Terminer");
@@ -176,6 +234,12 @@ public class DashboardProfesseur extends JFrame {
             }
 
             Question q = new Question(txtEnonce.getText());
+            
+            // Si un média a été sélectionné, on l'ajoute à l'objet
+            if (mediaPath[0] != null) {
+                q.setMedia(mediaPath[0]);
+            }
+
             boolean auMoinsUneJuste = false;
 
             for (int i = 0; i < listeLignes.size(); i++) {
