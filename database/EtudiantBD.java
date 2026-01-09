@@ -40,9 +40,7 @@ public class EtudiantBD {
 	public static void main(String[] args) {
 		EtudiantBD E1 = new EtudiantBD();
 		try {
-
-			
-			System.out.println(			E1.trouverParID(1));
+			System.out.println(E1.trouverParID(1));
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
