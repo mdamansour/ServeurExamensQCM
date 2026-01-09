@@ -8,11 +8,10 @@ import modele.Etudiant;
 public class EtudiantBD {
 	
 	public Etudiant trouverParID(int id) throws SQLException {
-		
+		Etudiant etudiant = null;
 		ResultSet resultat = null;
 		Statement st = null;
 		String request = "SELECT * FROM etudiant WHERE id = " + id;
-		
 
 		try {
 			st = Connexion.getConnexion().createStatement();
@@ -24,10 +23,17 @@ public class EtudiantBD {
 		}
 		
 		while (resultat.next()) {
-			System.out.println(resultat.getInt(1) + ", " + resultat.getString(2) + ", " + resultat.getString(3) + ", " + resultat.getString(4) + ", " + resultat.getString(5) + ", " + resultat.getString(6) + ";");
-		}
+			etudiant = new Etudiant(
+	                resultat.getInt(1), 
+	                resultat.getString(2), 
+	                resultat.getString(3),
+	                resultat.getString(4),
+	                resultat.getString(5),
+	                resultat.getString(6)
+	            );
+			}
 		
-		return null;
+		return etudiant;
 		
 	}
 	
