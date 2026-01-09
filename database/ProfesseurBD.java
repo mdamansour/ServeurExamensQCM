@@ -1,17 +1,17 @@
 package database;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import modele.Etudiant;
+import modele.Professeur;
 
-public class EtudiantBD {
-	
-	public Etudiant trouverParID(int id) throws SQLException {
-		Etudiant etudiant = null;
+public class ProfesseurBD {
+	public Professeur trouverParID(int id) throws SQLException {
+		Professeur professeur = null;
 		ResultSet resultat = null;
 		Statement st = null;
-		String request = "SELECT * FROM etudiant WHERE id = " + id;
+		String request = "SELECT * FROM professeur WHERE id = " + id;
 
 		try {
 			st = Connexion.getConnexion().createStatement();
@@ -23,24 +23,22 @@ public class EtudiantBD {
 		}
 		
 		while (resultat.next()) {
-			etudiant = new Etudiant(
+			professeur = new Professeur( 
 	                resultat.getInt(1), 
-	                resultat.getString(2), 
-	                resultat.getString("filiere"),
-	                resultat.getString(4),
-	                resultat.getString("matricule"),
-	                resultat.getString(6),
-	                resultat.getString(7)
+	                resultat.getString("nom_complet"), 
+	                resultat.getString("specialite"),
+	                resultat.getString("email"),
+	                resultat.getString("password")
 	            );
 			}
 		
-		return etudiant;
+		return professeur;
 	}
 	
 	public static void main(String[] args) {
-		EtudiantBD E1 = new EtudiantBD();
+		ProfesseurBD P1 = new ProfesseurBD();
 		try {
-			System.out.println(E1.trouverParID(2));
+			System.out.println(P1.trouverParID(1));
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
