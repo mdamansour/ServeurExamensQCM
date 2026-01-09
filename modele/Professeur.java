@@ -2,29 +2,32 @@ package modele;
 
 public class Professeur {
 	
-	// Attributs
+	// Attributs obligatoires
 	private int id;
 	private String nomComplet;
 	private String specialite;
+	private String email;
 	
+	// Attribut pour l'authentification
+	private String password;
 	
-	// Constructeurs
-	// hada ghadi ycreati lina l'object les atts a5rin ghadi nzidohom b Setters
-	public Professeur(String nomComplet, String specialite) {
+	// 1. Constructeur pour la création (sans ID)
+	public Professeur(String nomComplet, String specialite, String email, String password) {
 		this.nomComplet = nomComplet;
 		this.specialite = specialite;
+		this.email = email;
+		this.password = password;
 	}
 	
-	// constructeurs complet (hada ki3awnk bach tvisualiser l'object dyalk mn DataBase)
-	public Professeur(int id, String nomComplet, String specialite) {
+	// 2. Constructeur complet (pour la récupération depuis la DB)
+	public Professeur(int id, String nomComplet, String specialite, String email, String password) {
 		this.id = id;
 		this.nomComplet = nomComplet;
 		this.specialite = specialite;
+		this.email = email;
+		this.password = password;
 	}
 
-	
-	
-	
 	// Getters and Setters
 	public int getId() {
 		return id;
@@ -49,12 +52,29 @@ public class Professeur {
 	public void setSpecialite(String specialite) {
 		this.specialite = specialite;
 	}
-	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	
 	@Override
 	public String toString() {
-		return "Professeur [id=" + id + ", nom complet=" + nomComplet + ", specialite=" + specialite + "]";
+		// Le password est exclu ici pour la sécurité
+		return "Professeur [id=" + id + 
+			   ", nom complet=" + nomComplet + 
+			   ", specialite=" + specialite + 
+			   ", email=" + email + "]";
 	}
-	
-	
 }
