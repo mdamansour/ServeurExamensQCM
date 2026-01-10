@@ -7,7 +7,7 @@ public class Question {
 	private int id;
 	private String enonce;
 	private ArrayList<String> choix;
-	private ArrayList<Integer> bonnesReponses; // Liste des index corrects (0, 1, 3...)
+	private ArrayList<Integer> bonnesReponses; // Liste des index corrects (0, 1, 3...) (ze3ma l IDs dyal les choix lis7a7in)
 	private String media; // Chemin vers image/video
 	
 	// Constructeur de création
@@ -29,33 +29,33 @@ public class Question {
 	// --- MÉTHODES MÉTIER (LE CERVEAU) ---
 	
 	/**
-	 * Calcule la note de cette question en fonction des réponses de l'élève.
-	 * @param indicesReponses : Les cases cochées par l'élève (ex: [0, 2])
-	 * @param baremeJuste : Points gagnés par bonne case (ex: +2)
-	 * @param baremeFaux : Points perdus par mauvaise case (ex: -1)
-	 * @return Le score final (peut être négatif)
+	 * Calcule la note en comparant les IDs des choix saisis par l'élève 
+	 * avec les IDs des bonnes réponses stockés en base de données.
+	 * * @param idsReponses : Liste des IDs (Primary Keys) des choix cochés par l'élève
+	 * @param baremeJuste : Points gagnés par bonne réponse
+	 * @param baremeFaux : Points perdus par mauvaise réponse (ex: -0.5)
+	 * @return Le score calculé pour cette question
 	 */
-	public double calculerScore(ArrayList<Integer> indicesReponses, double baremeJuste, double baremeFaux) {
-		double score = 0.0;
-		
-		if (indicesReponses == null || indicesReponses.isEmpty()) {
-			return 0.0; // Pas de réponse = 0 (sera géré comme "Vide" dans le Main si besoin)
-		}
+	public double calculerScore(ArrayList<Integer> idsReponses, double baremeJuste, double baremeFaux) {
+	    double score = 0.0;
+	    
+	    // Si l'étudiant n'a rien coché, il a 0 (ou le baremeVide de l'Examen)
+	    if (idsReponses == null || idsReponses.isEmpty()) {
+	        return 0.0; 
+	    }
 
-		for (int indexChoisi : indicesReponses) {
-			// Sécurité : On ignore les index hors limites
-			if (indexChoisi >= 0 && indexChoisi < this.choix.size()) {
-				
-				if (this.bonnesReponses.contains(indexChoisi)) {
-					// L'élève a coché une BONNE case -> Bonus
-					score += baremeJuste;
-				} else {
-					// L'élève a coché une MAUVAISE case -> Malus
-					score += baremeFaux; 
-				}
-			}
-		}
-		return score;
+	    for (int idChoisi : idsReponses) {
+	        // On vérifie si l'ID du choix cliqué est dans notre liste de "bonnesReponses" (IDs)
+	        if (this.bonnesReponses.contains(idChoisi)) {
+	            // L'ID est correct -> Bonus
+	            score += baremeJuste;
+	        } else {
+	            // L'ID est incorrect -> Malus
+	            score += baremeFaux; 
+	        }
+	    }
+	    
+	    return score;
 	}
 
 	/**

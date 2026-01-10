@@ -30,6 +30,9 @@ public class QuestionDB {
 			int newId = rs.getInt(1);
 			q.setId(newId);
 			
+			
+			/*--------------------------Choixs-----------------------------*/
+			
 			//db hanaya ghadi n inseriw les choix li linked lhad qst f tableau dyal choix.
 			String requestChoix = "INSERT INTO choix (id_question, texte_choix, est_correct) VALUES(?, ?, ?)";
 			PreparedStatement prChoix = connexion.prepareStatement(requestChoix);
@@ -45,12 +48,59 @@ public class QuestionDB {
 					prChoix.setInt(3, 0); //hada qst faux
 				prChoix.executeUpdate();
 			}
-			
-			
 		}
 		
 		
 	}
 	
 	
+	
+	// methode likatsiftlk les questions kamlin likaynin f exam sous forme de ArrayList
+	public ArrayList<Question> recupererParExam(int idExamen) throws SQLException{
+		Connection connexion = Connexion.getConnexion();
+		ArrayList<Question> questions = new ArrayList<>();
+		
+		String request = "SELECT * FROM question WHERE id_examen = ?"; //hadi request incomplet lighadi ytsift mn ba3d
+		PreparedStatement prQuestion = connexion.prepareStatement(request); // wjd handshake
+		prQuestion.setInt(1, idExamen); // 3amar dik ? b la valeur dyal idExamen
+		ResultSet resultatQuestion = prQuestion.executeQuery(); //sir 3la lah execute l'request
+		
+		while (resultatQuestion.next()) {
+			Question q = new Question(
+					resultatQuestion.getInt(1),  // 3ml f l'objet question jdid id lijbdti mn DB
+					resultatQuestion.getString(3),	// .... enonce
+					resultatQuestion.getString(4)	// .... Media link
+					);
+
+			q.setChoix(chargerChoix(q, connexion));
+			questions.add(q);
+		}
+		
+		return questions;
+		
+	}
+	
+	
+	
+	
+	/*--------------------------Choixs-----------------------------*/
+	public ArrayList<String> chargerChoix(Question question, Connection connexion) throws SQLException{
+		
+		//hadi hiya la partie lighadi tchargilna les choix f arrayList lighadi n3tiwha l chaque qst
+		ArrayList<String> choix = new ArrayList<>();	// hnaya ghadi n3amro les choix dyal koma qst
+		
+		String requestChoix = "SELECT * FROM choix WHERE id_question = ?";
+		PreparedStatement prChoix = connexion.prepareStatement(requestChoix);	//dirlna l handshake m3a la table choix
+		prChoix.setInt(1, question.getId());	//dirli f dik ? la valeur dyal id dyal question li 7na fih daba
+		ResultSet resultatChoix = prChoix.executeQuery();	
+		
+		while(resultatChoix.next()) {
+			choix.add(resultatChoix.getString(3));
+			if(resultatChoix.getInt(4)==1) {
+				question.ajouterBonneReponse(resultatChoix.getInt(1));	//3amarli ArrayList dyal bonnes reponses direct b methode li deja kayna
+			}
+		}
+		
+		return choix;
+	}
 }
