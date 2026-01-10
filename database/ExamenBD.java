@@ -12,8 +12,6 @@ import modele.Question;
 
 public class ExamenBD {
 	
-	
-	
 	public void creerExamen(Examen examen) throws SQLException{
 		//creer l'connexion lighan5edmo bih
 		Connection connexion = Connexion.getConnexion();
@@ -91,5 +89,61 @@ public class ExamenBD {
 	    
 	    System.out.println("Examen " + idExamen + " and all its content deleted.");
 	}
+
 	
+	
+	
+	
+	/**
+	 * Retrieves all exams matching the student's specific path (Filiere and Level).
+	 * This populates the student's exam list.
+	 */
+	public ArrayList<Examen> recupererPourEtudiant(String filiere, String niveau) throws SQLException {
+		ArrayList<Examen> liste = new ArrayList<>();
+		Connection connexion = Connexion.getConnexion();
+		
+		// SQL Query to filter by path
+		String sql = "SELECT * FROM examen WHERE filiere = ? AND niveau = ?";
+		PreparedStatement ps = connexion.prepareStatement(sql);
+		ps.setString(1, filiere);
+		ps.setString(2, niveau);
+		ResultSet rs = ps.executeQuery();
+		
+		ProfesseurBD pbd = new ProfesseurBD(); 
+		
+		while (rs.next()) {
+			Examen ex = new Examen(
+				rs.getInt("id"),
+				rs.getString("titre"),
+				rs.getString("filiere"),
+				rs.getString("niveau"),
+				pbd.trouverParID(rs.getInt("id_prof")),
+				rs.getDouble("point_si_juste"),
+				rs.getDouble("point_si_faux"),
+				rs.getDouble("point_si_vide")
+			);
+			liste.add(ex);
+		}
+		return liste;
+	}
+	
+	public ArrayList<Examen> recupererParProfesseur(int idProf) throws SQLException {
+	    ArrayList<Examen> liste = new ArrayList<>();
+	    Connection connexion = Connexion.getConnexion();
+	    String sql = "SELECT * FROM examen WHERE id_prof = ?";
+	    PreparedStatement ps = connexion.prepareStatement(sql);
+	    ps.setInt(1, idProf);
+	    ResultSet rs = ps.executeQuery();
+	    
+	    ProfesseurBD pbd = new ProfesseurBD();
+	    while (rs.next()) {
+	        Examen ex = new Examen(
+	            rs.getInt("id"), rs.getString("titre"), rs.getString("filiere"),
+	            rs.getString("niveau"), pbd.trouverParID(idProf),
+	            rs.getDouble("point_si_juste"), rs.getDouble("point_si_faux"), rs.getDouble("point_si_vide")
+	        );
+	        liste.add(ex);
+	    }
+	    return liste;
+	}
 }
