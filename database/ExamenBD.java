@@ -39,11 +39,22 @@ public class ExamenBD {
 		ResultSet resultatExam = prExam.getGeneratedKeys();
 		QuestionBD question = new QuestionBD();
 		
+
+		
 		if (resultatExam.next()) {
+			// 1. We get the REAL ID from the database (e.g., 1 or 2)
+			int newId = resultatExam.getInt(1); 
+			
+			// 2. IMPORTANT: We tell the Java Object "Your ID is no longer 0, it is newId"
+			examen.setId(newId);  // <--- THIS IS THE FIX
+			
+			// 3. We save the questions using the real ID
 			for(int i = 0; i<examen.getQuestions().size();i++) {
-				question.sauvegarderQuestion(examen.getQuestions().get(i), resultatExam.getInt(1));
+				question.sauvegarderQuestion(examen.getQuestions().get(i), newId);
 			}
 		}
+		
+		
 		
 	}
 	
