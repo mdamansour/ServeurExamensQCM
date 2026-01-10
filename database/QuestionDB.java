@@ -56,7 +56,7 @@ public class QuestionDB {
 	
 	
 	// methode likatsiftlk les questions kamlin likaynin f exam sous forme de ArrayList
-	public ArrayList<Question> recupererParExam(int idExamen) throws SQLException{
+	public ArrayList<Question> recupererParExamen(int idExamen) throws SQLException{
 		Connection connexion = Connexion.getConnexion();
 		ArrayList<Question> questions = new ArrayList<>();
 		
@@ -103,4 +103,13 @@ public class QuestionDB {
 		
 		return choix;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
