@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import modele.Etudiant;
 import modele.Professeur;
 
-public class AuthentificationDB {
+public class AuthentificationBD {
 
     public Object utilisateur(String email, String pass) {
         Connection connexion = null;
