@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import modele.Question;
 
-public class QuestionDB {
+public class QuestionBD {
 	
 	// methode bach tsjel l'question bles choix dyalo kaaamlin wst database
 	public void sauvegarderQuestion(Question q, int idExamen) throws SQLException {
@@ -50,7 +50,8 @@ public class QuestionDB {
 			}
 		}
 		
-		
+	    System.out.println("Question added successfully.");
+
 	}
 	
 	
@@ -107,7 +108,26 @@ public class QuestionDB {
 	
 	
 	
-	
+	// Methode bach tms7 question (khass tms7 les choix dyawlho 3ad tms7o howa)
+	public void supprimerQuestion(int idQuestion) throws SQLException {
+	    Connection connexion = Connexion.getConnexion();
+	    
+	    // 1. Step 1: Delete all choices linked to this question
+	    // Hada darouri bach may3tikch error dyal Foreign Key
+	    String requestChoix = "DELETE FROM choix WHERE id_question = ?";
+	    PreparedStatement prChoix = connexion.prepareStatement(requestChoix);
+	    prChoix.setInt(1, idQuestion);
+	    prChoix.executeUpdate();
+	    
+	    // 2. Step 2: Delete the question itself
+	    // Db 3ad n9dro nms7o question
+	    String requestQuestion = "DELETE FROM question WHERE id = ?";
+	    PreparedStatement prQuestion = connexion.prepareStatement(requestQuestion);
+	    prQuestion.setInt(1, idQuestion);
+	    prQuestion.executeUpdate();
+	    
+	    System.out.println("Question deleted successfully.");
+	}
 	
 	
 	
