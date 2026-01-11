@@ -99,24 +99,12 @@ public abstract class BaseWindow extends JFrame {
         
         
         
-        /*
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * */
+        /*----------------------- Text manipulation ---------------- */
         
-        // Title of the window
-        JLabel headerText = new JLabel("Header Text");
-        headerText.setFont(new Font("Arial", Font.BOLD, 16));
-        headerText.setForeground(Color.WHITE);
-        headerText.setHorizontalAlignment(JLabel.CENTER);
-        northCenterPanel.add(headerText, BorderLayout.CENTER);
+
         
-        JLabel footerText = new JLabel("© 2026 Université Sidi Mohamed Ben Abdellah - Fes");	//text dyal lfooter, t9dar tbdlo bach mabghiti
+        // text in ffooter
+        JLabel footerText = new JLabel("2025/2026 Université Sidi Mohamed Ben Abdellah - Fes");	//text dyal lfooter, t9dar tbdlo bach mabghiti
         footerText.setFont(new Font("SansSerif", Font.ITALIC, 12));
         footerText.setForeground(Color.WHITE);
         footerText.setHorizontalAlignment(JLabel.CENTER);
@@ -135,4 +123,15 @@ public abstract class BaseWindow extends JFrame {
         
         
     }
+    
+    public void changerHeaderTitre (String text) {
+        // Title of the window
+        JLabel headerText = new JLabel(text);
+        headerText.setFont(new Font("Arial", Font.BOLD, 16));
+        headerText.setForeground(Color.WHITE);
+        headerText.setHorizontalAlignment(JLabel.CENTER);
+        northCenterPanel.add(headerText, BorderLayout.CENTER);
+    }
+    
+    
 }

@@ -10,10 +10,13 @@ public class AuthentificationGUI extends BaseWindow {
 
     public AuthentificationGUI() {
     	
-        super("Authentification - Serveur QCM"); 
+        super("Authentification - Serveur QCM");
         
-
-
+        
+        
+        
+        
+        changerHeaderTitre("Connextion");
         this.setVisible(true);
     }
  
