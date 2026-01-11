@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public abstract class BaseWindow extends JFrame {
 	
 	// declaration of zones of our application
-    protected JPanel northPanel, southPanel;
+    protected JPanel northPanel, southPanel, centerPanel;
     protected JPanel northEastPanel, northWestPanel, northCenterPanel;
     protected JPanel southEastPanel, southWestPanel, southCenterPanel;
     
