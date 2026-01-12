@@ -4,18 +4,17 @@ public class Resultat {
 	private int id;
 	private int idExamen;
 	private int idEtudiant;
-	private String nomEtudiant; // On va le récupérer via une jointure SQL
 	private double note;
+	private String datePassage;
 
-	public Resultat(int id, int idExamen, int idEtudiant, String nomEtudiant, double note) {
+	public Resultat(int id, int idExamen, int idEtudiant, double note, String datePassage) {
 		this.id = id;
 		this.idExamen = idExamen;
 		this.idEtudiant = idEtudiant;
-		this.nomEtudiant = nomEtudiant;
 		this.note = note;
+		this.datePassage = datePassage;
 	}
 
-	// Getters  (no setters 7itach mabghinchi nbedlo no9ta apres exams, safi saalat)
 	public int getId() {
 		return id;
 	}
@@ -28,16 +27,16 @@ public class Resultat {
 		return idEtudiant; 
 	}
 	
-	public String getNomEtudiant() {
-		return nomEtudiant; 
-	}
-	
 	public double getNote() {
 		return note;
 	}
 
+	public String getDatePassage() {
+		return datePassage;
+	}
+
 	@Override
 	public String toString() {
-		return "Étudiant : " + nomEtudiant + " | Note : " + note + "/20";
+		return "Etudiant ID : " + idEtudiant + " | Note : " + note + "/20";
 	}
 }
