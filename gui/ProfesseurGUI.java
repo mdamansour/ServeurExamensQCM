@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -116,46 +118,69 @@ public class ProfesseurGUI extends BaseWindow {
     	JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         panelBoutons.setBackground(secondaryColor);
 
-        // Création des boutons locaux
-        btnAjouter = creerBouton("Créer un Examen", new Color(46, 204, 113)); // Vert
-        btnResultats = creerBouton("Voir les Résultats", new Color(52, 152, 219)); // Bleu
-        btnSupprimer = creerBouton("Supprimer", new Color(231, 76, 60)); // Rouge
-
-        // --- ACTIONS ---
-        btnAjouter.addActionListener(e -> {
-             // new CreationExamenGUI(profDyali);
-             JOptionPane.showMessageDialog(this, "Bientôt: Ouverture de la fenêtre Création");
-        });
-
-        btnResultats.addActionListener(e -> {
-            int selectedRow = tableExamens.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Veuillez sélectionner un examen.");
-            } else {
-                String titre = (String) newTableau.getValueAt(selectedRow, 1);
-                JOptionPane.showMessageDialog(this, "Résultats pour : " + titre);
-                // new ResultatsExamenGUI((int) newTableau.getValueAt(selectedRow, 0));
-            }
-        });
-
-        btnSupprimer.addActionListener(e -> {
-            supprimerExamenSelectionne();
-        });
+        // creer les objets dyal boutons
+        btnAjouter = creerBouton("Créer un Examen", new Color(46, 204, 113)); // 5dar
+        btnResultats = creerBouton("Voir les Résultats", new Color(52, 152, 219)); // zra9
+        btnSupprimer = creerBouton("Supprimer", new Color(231, 76, 60)); // 7mar 
 
         // Ajout des boutons au panel interne
         panelBoutons.add(btnAjouter);
         panelBoutons.add(btnResultats);
         panelBoutons.add(btnSupprimer);
         
-        // Ajout du panel boutons au bas du centerPanel
+
+        
+        
+        
+        
+
+
+        btnAjouter.addActionListener(new ActionListener() {
+        	
+            @Override
+            public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+                JOptionPane.showMessageDialog(null, "Bientôt: Ouverture de la fenêtre Création");
+                
+            }
+        });
+        
+        
+        
+        
+        btnResultats.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen.");
+
+			}
+		});
+
+        btnSupprimer.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+
+	            supprimerExamenSelectionne();
+			}
+		});
+
+
+
+
+        
+        // 3ml dik panel des boutons jdida f south dyal central
         centerPanel.add(panelBoutons, BorderLayout.SOUTH);
 
-        // --- LE BOUTON DECONNEXION (PIED DE PAGE) ---
-        // Utilisation de la nouvelle classe indépendante
-        // Nous passons 'this' pour que le bouton puisse fermer CETTE fenêtre
+        //	activer bouton disconnect
         DisconnectButton btnDisconnect = new DisconnectButton(this);
         
-        // Ajout dans la zone Sud-Ouest (Footer) fournie par BaseWindow
+        // dir lbouton fblasto b7al da2iman (south west panel)
         southWestPanel.add(btnDisconnect);
     }
     
