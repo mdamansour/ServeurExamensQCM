@@ -40,6 +40,7 @@ public abstract class BaseWindow extends JFrame {
         // hada ki initialise ga3 les panneaux
         northPanel = new JPanel(new BorderLayout());
         southPanel = new JPanel(new BorderLayout());
+        centerPanel = new JPanel(new BorderLayout());
 
         northEastPanel = new JPanel(new BorderLayout());
         northWestPanel = new JPanel(new BorderLayout());
@@ -62,7 +63,8 @@ public abstract class BaseWindow extends JFrame {
         // zid had l objects f blasthom 
         this.add(northPanel, BorderLayout.NORTH);
         this.add(southPanel, BorderLayout.SOUTH);
-
+        this.add(centerPanel, BorderLayout.CENTER);
+        
         // customization of north and south panels
         northPanel.setPreferredSize(new Dimension(0, 50));
         southPanel.setPreferredSize(new Dimension(0, 50));
@@ -100,7 +102,7 @@ public abstract class BaseWindow extends JFrame {
         
         
         /*----------------------- Text manipulation ---------------- */
-        
+
 
         
         // text in ffooter
