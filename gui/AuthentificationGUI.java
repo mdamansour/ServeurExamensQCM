@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import database.AuthentificationBD;
+import gui.dependencies.BaseWindow;
 import modele.Etudiant;
 import modele.Professeur;
 
