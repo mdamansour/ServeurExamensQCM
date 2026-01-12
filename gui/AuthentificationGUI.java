@@ -37,7 +37,7 @@ public class AuthentificationGUI extends BaseWindow {
         
         
         // creating elements of the page
-        labelPrompt = new JLabel("Veuillez entrer vos coordonnées");
+        JLabel labelPrompt = new JLabel("Veuillez entrer vos coordonnées");
         labelPrompt.setFont(new Font("SansSerif", Font.BOLD, 12));
         labelPrompt.setForeground(Color.BLACK);
         labelPrompt.setHorizontalAlignment(JLabel.CENTER);
@@ -59,7 +59,12 @@ public class AuthentificationGUI extends BaseWindow {
         
         buttonSubmit = new JButton("Connexion");
         
-     // --- LOGIQUE D'AUTHENTIFICATION (NOUVEAU) ---
+
+        
+        
+        
+        
+        // action listener likib9a 3asas 3la button bach ytclicka
         buttonSubmit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -125,8 +130,8 @@ public class AuthentificationGUI extends BaseWindow {
         }
 
         // 2. Appeler le Backend
-        AuthentificationBD authBD = new AuthentificationBD();
-        Object utilisateur = authBD.utilisateur(email, password);
+        AuthentificationBD authentificationBD = new AuthentificationBD();
+        Object utilisateur = authentificationBD.utilisateur(email, password);
 
         // 3. Vérifier le résultat
         if (utilisateur == null) {
