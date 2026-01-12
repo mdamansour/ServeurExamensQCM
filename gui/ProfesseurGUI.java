@@ -40,9 +40,9 @@ public class ProfesseurGUI extends BaseWindow {
         // Configuration du panneau central en BorderLayout
         centerPanel.setLayout(new BorderLayout());
 
-        // 1. Initialisation des composants
-        initTableau();
-        initBoutons(); 
+        // initialisation boutons w tableau
+        initialiserTableau();
+        initialiserBoutons(); 
 
         // 2. Chargement des données
         chargerExamens();
@@ -50,7 +50,7 @@ public class ProfesseurGUI extends BaseWindow {
         this.setVisible(true);
     }
 
-    private void initTableau() {
+    private void initialiserTableau() {
     	
     	
     	
@@ -112,7 +112,7 @@ public class ProfesseurGUI extends BaseWindow {
     
     
     
-    private void initBoutons() {
+    private void initialiserBoutons() {
 
     	// creer wa7d panel jdida 5asa bles boutons
     	JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
@@ -186,7 +186,7 @@ public class ProfesseurGUI extends BaseWindow {
     
     private void supprimerExamenSelectionne() {
         int selectedRow = tableExamens.getSelectedRow();
-        if (selectedRow == -1) {
+        if (selectedRow == -1) { // par default -1 kat3ni 7ta chi row ma mselectionner
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un examen à supprimer.");
             return;
         }
