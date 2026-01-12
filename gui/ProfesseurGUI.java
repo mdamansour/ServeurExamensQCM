@@ -65,7 +65,7 @@ public class ProfesseurGUI extends BaseWindow {
         
 
         // Hadi array lighanstockiw fiha strings dyal les colonnes dyalna
-        String[] colonnes = {"ID", "Titre de l'examen", "Filière", "Niveau"};
+        String[] colonnes = {"ID", "Titre de l'examenamen", "Filière", "Niveau"};
         
         
         
@@ -155,7 +155,7 @@ public class ProfesseurGUI extends BaseWindow {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen.");
+                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examenamen.");
 
 			}
 		});
@@ -184,32 +184,48 @@ public class ProfesseurGUI extends BaseWindow {
         southWestPanel.add(btnDisconnect);
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private void supprimerExamenSelectionne() {
-        int selectedRow = tableExamens.getSelectedRow();
-        if (selectedRow == -1) { // par default -1 kat3ni 7ta chi row ma mselectionner
-            JOptionPane.showMessageDialog(this, "Veuillez sélectionner un examen à supprimer.");
+    	
+    	
+    	
+        int selectedExam = tableExamens.getSelectedRow();
+        
+        
+        if (selectedExam == -1) { // par default -1 kat3ni 7ta chi row ma mselectionner
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examenamen à supprimer.");
             return;
         }
         
-        int confirmation = JOptionPane.showConfirmDialog(this, 
-            "Voulez-vous vraiment supprimer cet examen ?", "ATTENTION", JOptionPane.YES_NO_OPTION);
         
-        if (confirmation == JOptionPane.YES_OPTION) {
-            int idExamen = (int) newTableau.getValueAt(selectedRow, 0);
+        
+        int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer cet examenamen ?", "ATTENTION", JOptionPane.YES_NO_OPTION);	// wach m2akd?
+        
+        if (confirmation == JOptionPane.YES_OPTION) {		// aaah wellahila m2aaaaked
+        	
+            int idExamen = (int) newTableau.getValueAt(selectedExam, 0);	//jbed id dyal examenam mn tableau dyal data (li invisible machi drsim) wdiro f idExamen
             try {
-                ExamenBD examenBD = new ExamenBD();
-                examenBD.supprimerExamen(idExamen);
-                chargerExamens(); // Rafraîchir le tableau
-                JOptionPane.showMessageDialog(this, "Examen supprimé.");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+                ExamenBD examenamenBD = new ExamenBD();
+                examenamenBD.supprimerExamen(idExamen);		// passer id dyal dik examenam lighanmes7o l examenamdb.supprimerExamen
+                chargerExamens(); // actualiser tableau
+                JOptionPane.showMessageDialog(null, "Examen supprimé.");
+            } catch (SQLException examen) {
+                examen.printStackTrace();
             }
         }
     }
     
-    // Helper pour le style uniforme des boutons
-    private JButton creerBouton(String texte, Color bg) {
-        JButton btn = new JButton(texte);
+    // hadi ghir methode bach ncreeiw nfs boutton bdes paramtres mbdlin
+    private JButton creerBouton(String texamente, Color bg) {
+        JButton btn = new JButton(texamente);
         btn.setBackground(bg);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
@@ -218,13 +234,13 @@ public class ProfesseurGUI extends BaseWindow {
     }
 
     private void chargerExamens() {
-        newTableau.setRowCount(0); // Clear
-        ExamenBD examenBD = new ExamenBD();
+        newTableau.setRowCount(0); // msa7 rows likaynin f tablea kaaaaamlin
+        ExamenBD examenamenBD = new ExamenBD();
         try {
-            ArrayList<Examen> liste = examenBD.recupererParProfesseur(profDyali.getId());
-            for (Examen ex : liste) {
-                Object[] ligne = {ex.getId(), ex.getTitre(), ex.getFiliere(), ex.getNiveau()};
-                newTableau.addRow(ligne);
+            ArrayList<Examen> liste = examenamenBD.recupererParProfesseur(profDyali.getId());	//wjd array lighadi tsejjel fiha les examenams dyal had prof
+            for (Examen examen : liste) {
+                Object[] ligne = {examen.getId(), examen.getTitre(), examen.getFiliere(), examen.getNiveau()};	// le type objet 7itach un examen est un objet w expected parametre a un type objet
+                newTableau.addRow(ligne);	//3amar had row f newTableau
             }
         } catch (SQLException e) {
             e.printStackTrace();
