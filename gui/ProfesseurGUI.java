@@ -155,7 +155,7 @@ public class ProfesseurGUI extends BaseWindow {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examenamen.");
+                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen.");
 
 			}
 		});
@@ -201,13 +201,13 @@ public class ProfesseurGUI extends BaseWindow {
         
         
         if (selectedExam == -1) { // par default -1 kat3ni 7ta chi row ma mselectionner
-            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examenamen à supprimer.");
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen à supprimer.");
             return;
         }
         
         
         
-        int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer cet examenamen ?", "ATTENTION", JOptionPane.YES_NO_OPTION);	// wach m2akd?
+        int confirmation = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer cet examen ?", "ATTENTION", JOptionPane.YES_NO_OPTION);	// wach m2akd?
         
         if (confirmation == JOptionPane.YES_OPTION) {		// aaah wellahila m2aaaaked
         	
@@ -235,9 +235,9 @@ public class ProfesseurGUI extends BaseWindow {
 
     private void chargerExamens() {
         newTableau.setRowCount(0); // msa7 rows likaynin f tablea kaaaaamlin
-        ExamenBD examenamenBD = new ExamenBD();
+        ExamenBD examenBD = new ExamenBD();
         try {
-            ArrayList<Examen> liste = examenamenBD.recupererParProfesseur(profDyali.getId());	//wjd array lighadi tsejjel fiha les examenams dyal had prof
+            ArrayList<Examen> liste = examenBD.recupererParProfesseur(profDyali.getId());	//wjd array lighadi tsejjel fiha les examenams dyal had prof
             for (Examen examen : liste) {
                 Object[] ligne = {examen.getId(), examen.getTitre(), examen.getFiliere(), examen.getNiveau()};	// le type objet 7itach un examen est un objet w expected parametre a un type objet
                 newTableau.addRow(ligne);	//3amar had row f newTableau
@@ -250,7 +250,7 @@ public class ProfesseurGUI extends BaseWindow {
     
     public static void main(String[] args) {
         // Test
-        Professeur p = new Professeur(1, "Test Prof", "Info", "email", "pass");
+        Professeur p = new Professeur(2, "Test Prof", "Info", "email", "pass");
         new ProfesseurGUI(p);
     }
     
