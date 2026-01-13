@@ -145,17 +145,15 @@ public class AuthentificationGUI extends BaseWindow {
             if (utilisateur instanceof Etudiant) {
                 Etudiant etudiant = (Etudiant) utilisateur;
                 System.out.println("Succès : Connexion Etudiant -> " + etudiant.getNomComplet());
-                JOptionPane.showMessageDialog(this, "Bienvenue Etudiant : " + etudiant.getNomComplet());
 
 
                 
-                // zid etudiant later
+                new EtudiantGUI(etudiant);    
                 
                 
             } else if (utilisateur instanceof Professeur) {
                 Professeur prof = (Professeur) utilisateur;
                 System.out.println("Succès : Connexion Professeur -> " + prof.getNomComplet());
-                JOptionPane.showMessageDialog(this, "Bienvenue Professeur : " + prof.getNomComplet());
                 new ProfesseurGUI(prof);                
                 
                 

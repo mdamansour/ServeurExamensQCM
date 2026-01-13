@@ -95,11 +95,20 @@ public class QuestionBD {
 		prChoix.setInt(1, question.getId());	//dirli f dik ? la valeur dyal id dyal question li 7na fih daba
 		ResultSet resultatChoix = prChoix.executeQuery();	
 		
+		// --- FIX: We need a counter to track the List Index (0, 1, 2...) ---
+		int index = 0;
+		
 		while(resultatChoix.next()) {
 			choix.add(resultatChoix.getString(3));
+			
 			if(resultatChoix.getInt(4)==1) {
-				question.ajouterBonneReponse(resultatChoix.getInt(1));	//3amarli ArrayList dyal bonnes reponses direct b methode li deja kayna
+				// --- FIX: Add the 'index' (0, 1, 2) instead of the Database ID (e.g., 54, 55) ---
+				// This ensures it matches the indices sent by the GUI checkboxes.
+				question.ajouterBonneReponse(index);	
 			}
+			
+			// Increment index for the next row
+			index++;
 		}
 		
 		return choix;

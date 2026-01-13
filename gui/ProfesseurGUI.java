@@ -141,25 +141,51 @@ public class ProfesseurGUI extends BaseWindow {
             public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 
-                JOptionPane.showMessageDialog(null, "Bientôt: Ouverture de la fenêtre Création");
+                new CreerExamGUI(profDyali, ProfesseurGUI.this);
                 
+            }
+        });
+        
+
+        
+        
+        
+        
+        
+        
+        
+        btnResultats.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+                int selectedRow = tableExamens.getSelectedRow();
+                
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen pour voir les notes.");
+                    return;
+                }
+
+                // 2. Retrieve Data from the hidden/visible columns
+                // Column 0 is ID (int), Column 1 is Title (String) based on your ProfesseurGUI code
+                int idExamen = (int) newTableau.getValueAt(selectedRow, 0); 
+                String titreExamen = (String) newTableau.getValueAt(selectedRow, 1);
+
+                // 3. Open the Results Window
+                new ProfResultatsGUI(idExamen, titreExamen);
             }
         });
         
         
         
         
-        btnResultats.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un examen.");
-
-			}
-		});
-
+        
+        
+        
+        
+        
+        
+        
+        
         btnSupprimer.addActionListener(new ActionListener() {
 			
 			@Override
@@ -233,7 +259,7 @@ public class ProfesseurGUI extends BaseWindow {
         return btn;
     }
 
-    private void chargerExamens() {
+    public void chargerExamens() {
         newTableau.setRowCount(0); // msa7 rows likaynin f tablea kaaaaamlin
         ExamenBD examenBD = new ExamenBD();
         try {
