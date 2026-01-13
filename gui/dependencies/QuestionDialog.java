@@ -136,21 +136,6 @@ public class QuestionDialog extends JDialog {
         bottomPanel.add(btnOk);
         this.add(bottomPanel, BorderLayout.SOUTH);
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -200,7 +185,7 @@ public class QuestionDialog extends JDialog {
             choiceFields.remove(txtChoice);
             correctBoxes.remove(chkCorrect);
             
-            // Refresh UI
+            // Refresh GUI
             choicesPanel.revalidate();
             choicesPanel.repaint();
         });

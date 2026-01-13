@@ -33,7 +33,7 @@ public class ExamenBD {
 		
 		
 		
-		/*---------------------------------save the questions---------------------------------*/
+		/*---------------------------------save the questions---------------------------------*****/
 		ResultSet resultatExam = prExam.getGeneratedKeys();
 		QuestionBD question = new QuestionBD();
 		

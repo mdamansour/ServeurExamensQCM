@@ -87,9 +87,10 @@ public class CreerExamGUI extends BaseWindow {
         
         
         
-        // 1. Init Form (North)
+        
     }
-
+    // 1. Init Form (North)
+    
     private void initialiserFormulaire() {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         formPanel.setBackground(secondaryColor);

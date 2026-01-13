@@ -28,10 +28,10 @@ public class QuestionBD {
 		ResultSet rs = pr.getGeneratedKeys();
 		if (rs.next()) {
 			int newId = rs.getInt(1);
-			q.setId(newId);
+			q.setId(newId);		// hna safi setup dyal id fel question dyalna tdart w objet question wla 3ando id dyalo li tgenera
 			
 			
-			/*--------------------------Choixs-----------------------------*/
+			/*--------------------------Choixs-----------------------------****/
 			
 			//db hanaya ghadi n inseriw les choix li linked lhad qst f tableau dyal choix.
 			String requestChoix = "INSERT INTO choix (id_question, texte_choix, est_correct) VALUES(?, ?, ?)";
@@ -95,15 +95,17 @@ public class QuestionBD {
 		prChoix.setInt(1, question.getId());	//dirli f dik ? la valeur dyal id dyal question li 7na fih daba
 		ResultSet resultatChoix = prChoix.executeQuery();	
 		
-		// --- FIX: We need a counter to track the List Index (0, 1, 2...) ---
 		int index = 0;
 		
 		while(resultatChoix.next()) {
 			choix.add(resultatChoix.getString(3));
 			
 			if(resultatChoix.getInt(4)==1) {
-				// --- FIX: Add the 'index' (0, 1, 2) instead of the Database ID (e.g., 54, 55) ---
-				// This ensures it matches the indices sent by the GUI checkboxes.
+
+
+				
+				
+				//hadi kat7sblek imta wsalti l la bonne reponse
 				question.ajouterBonneReponse(index);	
 			}
 			
@@ -121,7 +123,7 @@ public class QuestionBD {
 	public void supprimerQuestion(int idQuestion) throws SQLException {
 	    Connection connexion = Connexion.getConnexion();
 	    
-	    // 1. Step 1: Delete all choices linked to this question
+	
 	    // Hada darouri bach may3tikch error dyal Foreign Key
 	    String requestChoix = "DELETE FROM choix WHERE id_question = ?";
 	    PreparedStatement prChoix = connexion.prepareStatement(requestChoix);

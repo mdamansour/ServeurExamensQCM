@@ -6,6 +6,8 @@ import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -54,18 +56,25 @@ public class PasserExamenGUI extends BaseWindow {
         
         this.setVisible(true);
     }
-
+    
+    
+    
+    // had method uses QuestionBD bach t3amar examen object with its questions.
     private void loadQuestions() {
         QuestionBD qbd = new QuestionBD();
         try {
-            // Important: Examen object from the list might not have questions loaded yet
             ArrayList<Question> questions = qbd.recupererParExamen(examen.getId());
             examen.setQuestions(questions);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
+    
+    
+    
+    
+    
+    //hadi hiya likat3mlna graphique
     private void initialiserInterface() {
         JPanel questionsContainer = new JPanel();
         questionsContainer.setLayout(new BoxLayout(questionsContainer, BoxLayout.Y_AXIS));
@@ -86,7 +95,7 @@ public class PasserExamenGUI extends BaseWindow {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Faster scrolling
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Footer: Submit Button
+        // Footer, fin kayn buttons
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.setBackground(secondaryColor);
         
@@ -95,12 +104,21 @@ public class PasserExamenGUI extends BaseWindow {
         btnTerminer.setForeground(Color.WHITE);
         btnTerminer.setFont(new Font("SansSerif", Font.BOLD, 14));
         
-        btnTerminer.addActionListener(e -> soumettreExamen());
+        btnTerminer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                soumettreExamen();
+            }
+        });        
         
         footer.add(btnTerminer);
         centerPanel.add(footer, BorderLayout.SOUTH);
     }
 
+    
+    
+    
+    // action of clicking 3la buttoun terminer
     private void soumettreExamen() {
         int confirm = JOptionPane.showConfirmDialog(this, 
             "Voulez-vous vraiment terminer l'examen ?", 
