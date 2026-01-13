@@ -30,6 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import database.ExamenBD;
 import gui.dependencies.BaseWindow;
+import gui.dependencies.QuestionDialog;
 import modele.Examen;
 import modele.Professeur;
 import modele.Question;
@@ -91,11 +92,10 @@ public class CreerExamGUI extends BaseWindow {
 
     private void initialiserFormulaire() {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        centerPanel.add(formPanel, BorderLayout.NORTH);
         formPanel.setBackground(secondaryColor);
         formPanel.setBorder(BorderFactory.createTitledBorder("Informations Générales"));	// 9ad border + titr
 
-        // Row 1: Basic Info
+        // Row 1
         JPanel basicInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         basicInfo.setBackground(secondaryColor);
         
@@ -107,7 +107,7 @@ public class CreerExamGUI extends BaseWindow {
         basicInfo.add(new JLabel("Filière:")); basicInfo.add(txtFiliere);
         basicInfo.add(new JLabel("Niveau:")); basicInfo.add(txtNiveau);
 
-        // Row 2: Barème
+        // Row 2
         JPanel baremeInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         baremeInfo.setBackground(secondaryColor);
         
@@ -121,12 +121,13 @@ public class CreerExamGUI extends BaseWindow {
 
         formPanel.add(basicInfo);
         formPanel.add(baremeInfo);
+        centerPanel.add(formPanel, BorderLayout.NORTH);
+
     }
         
         
     
     
-    // 2. Init Questions List (Center)
     private void initialiserZoneQuestions() {
         modelListeQuestions = new DefaultListModel<>();
         JList<String> jListQuestions = new JList<>(modelListeQuestions);
@@ -139,8 +140,6 @@ public class CreerExamGUI extends BaseWindow {
     }
 
     
-    
-    // 3. Init Buttons (South)
     
     private void initialiserBoutons() {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -155,8 +154,24 @@ public class CreerExamGUI extends BaseWindow {
         btnSave.setForeground(Color.WHITE);
         btnSave.setFont(new Font("SansSerif", Font.BOLD, 12));
 
-        btnAddQ.addActionListener(e -> ouvrirDialogQuestion());
-        btnSave.addActionListener(e -> sauvegarderExamen());
+        
+        
+        
+        
+        // hadom action listeners 
+        btnAddQ.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                ouvrirDialogQuestion();
+            }
+        });
+
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                sauvegarderExamen();
+            }
+        });
 
         btnPanel.add(btnAddQ);
         btnPanel.add(btnSave);
@@ -164,6 +179,11 @@ public class CreerExamGUI extends BaseWindow {
         centerPanel.add(btnPanel, BorderLayout.SOUTH);
     }
 
+    
+    
+    
+    
+    
     private void ouvrirDialogQuestion() {
         QuestionDialog dialog = new QuestionDialog(this);
         Question q = dialog.showDialog();
@@ -217,193 +237,6 @@ public class CreerExamGUI extends BaseWindow {
     
     
     
-    // Dialogue pour créer une question 
-    class QuestionDialog extends JDialog {
-        private JTextField txtEnonce;
-        private JLabel lblMediaSelected; 
-        private String mediaPath = null; 
-        
-        private JPanel choicesPanel;
-        private ArrayList<JTextField> choiceFields;
-        private ArrayList<JCheckBox> correctBoxes;
-        private Question createdQuestion = null;
+    // Dialogue pour créer une question pop up lighat3tina acces bach nda5lo
 
-        public QuestionDialog(JFrame parent) {
-            super(parent, "Nouvelle Question", true);
-            this.setSize(600, 500);
-            this.setLocationRelativeTo(parent);
-            this.setLayout(new BorderLayout());
-
-            choiceFields = new ArrayList<>();
-            correctBoxes = new ArrayList<>();
-
-            // 1. TOP PANEL: Enonce + Media
-            JPanel topPanel = new JPanel(new BorderLayout());
-            topPanel.setBorder(BorderFactory.createTitledBorder("Détails de la question"));
-            
-            // A. Enonce
-            JPanel enoncePanel = new JPanel(new BorderLayout());
-            enoncePanel.add(new JLabel("Énoncé : "), BorderLayout.WEST);
-            txtEnonce = new JTextField();
-            enoncePanel.add(txtEnonce, BorderLayout.CENTER);
-            
-            // B. Media Selection
-            JPanel mediaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JButton btnMedia = new JButton("Joindre Média (Img/Vid/Aud)");
-            lblMediaSelected = new JLabel("Aucun fichier sélectionné");
-            lblMediaSelected.setFont(new Font("SansSerif", Font.ITALIC, 11));
-            
-            btnMedia.addActionListener(e -> choisirFichierMedia());
-            
-            mediaPanel.add(btnMedia);
-            mediaPanel.add(lblMediaSelected);
-
-            JPanel combinedTop = new JPanel(new GridLayout(2, 1, 0, 5));
-            combinedTop.add(enoncePanel);
-            combinedTop.add(mediaPanel);
-            
-            topPanel.add(combinedTop, BorderLayout.CENTER);
-            this.add(topPanel, BorderLayout.NORTH);
-
-            // 2. CENTER PANEL: Choices List + Add Button
-            JPanel centerWrapper = new JPanel(new BorderLayout());
-
-            choicesPanel = new JPanel();
-            choicesPanel.setLayout(new BoxLayout(choicesPanel, BoxLayout.Y_AXIS));
-            JScrollPane scroll = new JScrollPane(choicesPanel);
-            scroll.setBorder(BorderFactory.createTitledBorder("Choix de réponse"));
-            
-            // ajouter 2 choix par default
-            ajouterLigneChoix();
-            ajouterLigneChoix();
-            
-            // Button to add more choices
-            JButton btnAddChoice = new JButton("+ Ajouter un choix");
-            btnAddChoice.addActionListener(e -> ajouterLigneChoix());
-            JPanel btnAddPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            btnAddPanel.add(btnAddChoice);
-
-            centerWrapper.add(scroll, BorderLayout.CENTER);
-            centerWrapper.add(btnAddPanel, BorderLayout.SOUTH);
-
-            this.add(centerWrapper, BorderLayout.CENTER);
-
-            // 3. BOTTOM PANEL: Validate Button
-            JButton btnOk = new JButton("Valider la Question");
-            btnOk.setBackground(new Color(46, 204, 113));
-            btnOk.setForeground(Color.WHITE);
-            btnOk.addActionListener(e -> valider());
-            
-            JPanel bottomPanel = new JPanel();
-            bottomPanel.add(btnOk);
-            this.add(bottomPanel, BorderLayout.SOUTH);
-        }
-
-        private void choisirFichierMedia() {
-            JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "Média (Images, Vidéos, Audio)", "jpg", "png", "gif", "mp4", "avi", "mp3", "wav");
-            chooser.setFileFilter(filter);
-            
-            int returnVal = chooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                this.mediaPath = file.getAbsolutePath();
-                this.lblMediaSelected.setText(file.getName());
-                this.lblMediaSelected.setForeground(new Color(39, 174, 96)); //vert
-            }
-        }
-
-        
-        
-        
-        // ajoute ligne
-        
-        
-        private void ajouterLigneChoix() {
-            JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JTextField txtChoice = new JTextField(30);
-            JCheckBox chkCorrect = new JCheckBox("Correct?");
-            JButton btnDelete = new JButton("X");
-            
-            // botton pour supprimer 
-            
-            
-            btnDelete.setBackground(new Color(231, 76, 60)); // Red
-            btnDelete.setForeground(Color.WHITE);
-            btnDelete.setMargin(new Insets(2, 6, 2, 6)); // Make it small
-            btnDelete.setFocusPainted(false);
-
-            // add to list
-            choiceFields.add(txtChoice);
-            correctBoxes.add(chkCorrect);
-            
-            // Delete Action
-            btnDelete.addActionListener(e -> {
-                choicesPanel.remove(line);
-                choiceFields.remove(txtChoice);
-                correctBoxes.remove(chkCorrect);
-                
-                // Refresh UI
-                choicesPanel.revalidate();
-                choicesPanel.repaint();
-            });
-
-            line.add(new JLabel("• "));
-            line.add(txtChoice);
-            line.add(chkCorrect);
-            line.add(btnDelete);
-            
-            choicesPanel.add(line);
-            
-            // Refresh UI
-            choicesPanel.revalidate();
-            choicesPanel.repaint();
-        }
-
-        private void valider() {
-            if (txtEnonce.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "L'énoncé est vide.");
-                return;
-            }
-
-            createdQuestion = new Question(txtEnonce.getText());
-            
-            if (mediaPath != null) {
-                createdQuestion.setMedia(mediaPath);
-            }
-
-            boolean hasCorrectAnswer = false;
-
-            for (int i = 0; i < choiceFields.size(); i++) {
-                String text = choiceFields.get(i).getText().trim();
-                if (!text.isEmpty()) {
-                    createdQuestion.ajouterChoix(text);
-                    if (correctBoxes.get(i).isSelected()) {
-                        createdQuestion.ajouterBonneReponse(createdQuestion.getChoix().size() - 1); 
-                        hasCorrectAnswer = true;
-                    }
-                }
-            }
-
-            if (createdQuestion.getChoix().size() < 2) {
-                JOptionPane.showMessageDialog(this, "Il faut au moins 2 choix valides.");
-                createdQuestion = null;
-                return;
-            }
-            
-            if (!hasCorrectAnswer) {
-                JOptionPane.showMessageDialog(this, "Il faut au moins une réponse correcte.");
-                createdQuestion = null;
-                return;
-            }
-
-            this.setVisible(false);
-        }
-
-        public Question showDialog() {
-            this.setVisible(true);
-            return createdQuestion;
-        }
-    }
 }

@@ -46,13 +46,10 @@ public class PasserExamenGUI extends BaseWindow {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         changerHeaderTitre("Examen en cours : " + examen.getTitre());
 
-        // Layout setup
         centerPanel.setLayout(new BorderLayout());
         
-        // 1. Load Questions from DB
         loadQuestions();
 
-        // 2. Build UI
         initialiserInterface();
         
         this.setVisible(true);
@@ -70,7 +67,6 @@ public class PasserExamenGUI extends BaseWindow {
     }
 
     private void initialiserInterface() {
-        // Container for all questions
         JPanel questionsContainer = new JPanel();
         questionsContainer.setLayout(new BoxLayout(questionsContainer, BoxLayout.Y_AXIS));
 
@@ -124,7 +120,7 @@ public class PasserExamenGUI extends BaseWindow {
             ArrayList<Integer> reponses = qp.getSelectedIndices();
             
             // Calculate score for this question
-            scoreTotal += q.calculerScore(reponses, examen.getPointSiJuste(), examen.getPointSiFaux());
+            scoreTotal += q.calculerScore(reponses, examen.getPointSiJuste(), examen.getPointSiFaux(), examen.getPointSiVide());
             
             // Calculate max potential score (to normalize later)
             maxPossible += q.getScoreMaxPossible(examen.getPointSiJuste());
@@ -154,7 +150,6 @@ public class PasserExamenGUI extends BaseWindow {
         this.dispose();
     }
 
-    // --- Inner Class: UI for a single Question ---
     class QuestionPanel extends JPanel {
         private Question question;
         private ArrayList<JCheckBox> checkBoxes;

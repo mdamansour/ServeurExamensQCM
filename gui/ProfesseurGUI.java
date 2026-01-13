@@ -274,12 +274,7 @@ public class ProfesseurGUI extends BaseWindow {
     }
     
     
-    public static void main(String[] args) {
-        // Test
-        Professeur p = new Professeur(2, "Test Prof", "Info", "email", "pass");
-        new ProfesseurGUI(p);
-    }
-    
+
     
     
     

@@ -27,30 +27,22 @@ public class Question {
 	}
 	
 	// --- MÉTHODES MÉTIER (LE CERVEAU) ---
-	
+
 	/**
-	 * Calcule la note en comparant les IDs des choix saisis par l'élève 
-	 * avec les IDs des bonnes réponses stockés en base de données.
-	 * * @param idsReponses : Liste des IDs (Primary Keys) des choix cochés par l'élève
-	 * @param baremeJuste : Points gagnés par bonne réponse
-	 * @param baremeFaux : Points perdus par mauvaise réponse (ex: -0.5)
-	 * @return Le score calculé pour cette question
+	 * Modified to include 'baremeVide'
 	 */
-	public double calculerScore(ArrayList<Integer> idsReponses, double baremeJuste, double baremeFaux) {
+	public double calculerScore(ArrayList<Integer> idsReponses, double baremeJuste, double baremeFaux, double baremeVide) {
 	    double score = 0.0;
 	    
-	    // Si l'étudiant n'a rien coché, il a 0 (ou le baremeVide de l'Examen)
+	    // FIX: Return the specific "empty" score instead of 0.0
 	    if (idsReponses == null || idsReponses.isEmpty()) {
-	        return 0.0; 
+	        return baremeVide; 
 	    }
 
 	    for (int idChoisi : idsReponses) {
-	        // On vérifie si l'ID du choix cliqué est dans notre liste de "bonnesReponses" (IDs)
 	        if (this.bonnesReponses.contains(idChoisi)) {
-	            // L'ID est correct -> Bonus
 	            score += baremeJuste;
 	        } else {
-	            // L'ID est incorrect -> Malus
 	            score += baremeFaux; 
 	        }
 	    }

@@ -38,7 +38,10 @@ public class ProfResultatsGUI extends BaseWindow {
         super("Résultats de l'examen");
         this.idExamen = idExamen;
 
-        // IMPORTANT: When closing this specific window, do not close the whole app
+
+
+        
+        // 5ali app me7lola
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         changerHeaderTitre("Notes : " + titreExamen);

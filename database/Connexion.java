@@ -17,7 +17,7 @@ public class Connexion {
 			try {
 				Class.forName("com.mysql.jdbc.Driver"); //hada kichargi driver fel memoire
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
+				
 				System.err.println("ERREUR : Driver MySQL introuvable.");
 				e.printStackTrace();
 			}
@@ -26,7 +26,7 @@ public class Connexion {
 				maConnexion = DriverManager.getConnection(URL, USER, PASSWORD); // hada liki3mlk lconnexion (kisift les coordonnées)
 				System.out.println("Ana tconnectit l database, koulchi mezyan!");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				
 				System.err.println("ERREUR : Impossible de se connecter à la base de données.");
 				e.printStackTrace();
 			}
