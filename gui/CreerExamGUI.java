@@ -61,12 +61,6 @@ public class CreerExamGUI extends BaseWindow {
     public CreerExamGUI(Professeur prof, ProfesseurGUI parent) {
     	
         super("Création d'un nouvel examen");
-        
-        
-        
-        
-    
-        
         this.professeur = prof;
         this.parentGUI = parent;
         this.listeQuestions = new ArrayList<>();
@@ -75,6 +69,8 @@ public class CreerExamGUI extends BaseWindow {
         changerHeaderTitre("Nouvel Examen");
 
         centerPanel.setLayout(new BorderLayout(10, 10));
+        
+       
         
         // 1. Init Form (North)
         initialiserFormulaire();
@@ -86,15 +82,21 @@ public class CreerExamGUI extends BaseWindow {
         initialiserBoutons();
 
         this.setVisible(true);
+        
+        
+        
+        
+        // 1. Init Form (North)
     }
 
     private void initialiserFormulaire() {
         JPanel formPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        centerPanel.add(formPanel, BorderLayout.NORTH);
         formPanel.setBackground(secondaryColor);
-        formPanel.setBorder(BorderFactory.createTitledBorder("Informations Générales"));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Informations Générales"));	// 9ad border + titr
 
         // Row 1: Basic Info
-        JPanel basicInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel basicInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         basicInfo.setBackground(secondaryColor);
         
         txtTitre = new JTextField(15);
@@ -106,10 +108,10 @@ public class CreerExamGUI extends BaseWindow {
         basicInfo.add(new JLabel("Niveau:")); basicInfo.add(txtNiveau);
 
         // Row 2: Barème
-        JPanel baremeInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel baremeInfo = new JPanel(new FlowLayout(FlowLayout.CENTER));
         baremeInfo.setBackground(secondaryColor);
         
-        spinJuste = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.5));
+        spinJuste = new JSpinner(new SpinnerNumberModel(1.0, 0.1, 10.0, 0.5));	//(default, min, max, le pas)
         spinFaux = new JSpinner(new SpinnerNumberModel(0.0, -5.0, 0.0, 0.5)); 
         spinVide = new JSpinner(new SpinnerNumberModel(0.0, -5.0, 0.0, 0.5));
 
@@ -119,10 +121,12 @@ public class CreerExamGUI extends BaseWindow {
 
         formPanel.add(basicInfo);
         formPanel.add(baremeInfo);
-        
-        centerPanel.add(formPanel, BorderLayout.NORTH);
     }
-
+        
+        
+    
+    
+    // 2. Init Questions List (Center)
     private void initialiserZoneQuestions() {
         modelListeQuestions = new DefaultListModel<>();
         JList<String> jListQuestions = new JList<>(modelListeQuestions);
@@ -134,12 +138,16 @@ public class CreerExamGUI extends BaseWindow {
         centerPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
+    
+    
+    // 3. Init Buttons (South)
+    
     private void initialiserBoutons() {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnPanel.setBackground(secondaryColor);
 
         JButton btnAddQ = new JButton("+ Ajouter une Question");
-        btnAddQ.setBackground(new Color(52, 152, 219)); // Blue
+        btnAddQ.setBackground(new Color(52, 152, 219)); // nombre representant Blue
         btnAddQ.setForeground(Color.WHITE);
         
         JButton btnSave = new JButton("SAUVEGARDER L'EXAMEN");
@@ -162,7 +170,6 @@ public class CreerExamGUI extends BaseWindow {
         
         if (q != null) {
             listeQuestions.add(q);
-            // Show a small icon or text if media is present
             String mediaIndicator = (q.getMedia() != null && !q.getMedia().isEmpty()) ? " [MEDIA]" : "";
             modelListeQuestions.addElement("Q" + listeQuestions.size() + ": " + q.getEnonce() + mediaIndicator + " (" + q.getChoix().size() + " choix)");
         }
@@ -206,7 +213,11 @@ public class CreerExamGUI extends BaseWindow {
         }
     }
 
-    // --- INNER CLASS: Dialog to Create a Question ---
+    
+    
+    
+    
+    // Dialogue pour créer une question 
     class QuestionDialog extends JDialog {
         private JTextField txtEnonce;
         private JLabel lblMediaSelected; 
@@ -262,7 +273,7 @@ public class CreerExamGUI extends BaseWindow {
             JScrollPane scroll = new JScrollPane(choicesPanel);
             scroll.setBorder(BorderFactory.createTitledBorder("Choix de réponse"));
             
-            // Add 2 initial choices
+            // ajouter 2 choix par default
             ajouterLigneChoix();
             ajouterLigneChoix();
             
@@ -299,23 +310,31 @@ public class CreerExamGUI extends BaseWindow {
                 File file = chooser.getSelectedFile();
                 this.mediaPath = file.getAbsolutePath();
                 this.lblMediaSelected.setText(file.getName());
-                this.lblMediaSelected.setForeground(new Color(39, 174, 96));
+                this.lblMediaSelected.setForeground(new Color(39, 174, 96)); //vert
             }
         }
 
+        
+        
+        
+        // ajoute ligne
+        
+        
         private void ajouterLigneChoix() {
             JPanel line = new JPanel(new FlowLayout(FlowLayout.LEFT));
             JTextField txtChoice = new JTextField(30);
             JCheckBox chkCorrect = new JCheckBox("Correct?");
             JButton btnDelete = new JButton("X");
             
-            // Styling the delete button
+            // botton pour supprimer 
+            
+            
             btnDelete.setBackground(new Color(231, 76, 60)); // Red
             btnDelete.setForeground(Color.WHITE);
             btnDelete.setMargin(new Insets(2, 6, 2, 6)); // Make it small
             btnDelete.setFocusPainted(false);
 
-            // Add to lists
+            // add to list
             choiceFields.add(txtChoice);
             correctBoxes.add(chkCorrect);
             
@@ -358,10 +377,8 @@ public class CreerExamGUI extends BaseWindow {
 
             for (int i = 0; i < choiceFields.size(); i++) {
                 String text = choiceFields.get(i).getText().trim();
-                // Only add non-empty choices
                 if (!text.isEmpty()) {
                     createdQuestion.ajouterChoix(text);
-                    // Since we iterate through the list sequentially, the index i matches
                     if (correctBoxes.get(i).isSelected()) {
                         createdQuestion.ajouterBonneReponse(createdQuestion.getChoix().size() - 1); 
                         hasCorrectAnswer = true;
